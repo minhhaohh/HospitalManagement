@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Hospital.Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using PatientManagement.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace PatientManagement.Mapping
+namespace Hospital.Entityframework.Mapping
 {
     public class DistrictMap : IEntityTypeConfiguration<District>
     {

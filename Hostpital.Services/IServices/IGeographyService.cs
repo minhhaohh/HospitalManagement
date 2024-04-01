@@ -1,6 +1,6 @@
-﻿using PatientManagement.Models;
+﻿using Hospital.Domain.Models;
 
-namespace PatientManagement.IServices
+namespace Hostpital.Service.IServices
 {
     public interface IGeographyService
     {

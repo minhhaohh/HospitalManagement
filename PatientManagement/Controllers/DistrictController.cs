@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PatientManagement.IServices;
+﻿using Hostpital.Service.IServices;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PatientManagement.Controllers
 {

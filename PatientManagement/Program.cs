@@ -1,7 +1,7 @@
+using Hospital.Entityframework.Contexts;
+using Hostpital.Service.IServices;
+using Hostpital.Service.Services;
 using Microsoft.EntityFrameworkCore;
-using PatientManagement.Contexts;
-using PatientManagement.IServices;
-using PatientManagement.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

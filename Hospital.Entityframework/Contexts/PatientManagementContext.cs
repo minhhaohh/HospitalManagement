@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PatientManagement.Mapping;
+﻿using Hospital.Entityframework.Mapping;
+using Microsoft.EntityFrameworkCore;
 
-namespace PatientManagement.Contexts
+namespace Hospital.Entityframework.Contexts
 {
     public class PatientManagementContext : DbContext
     {

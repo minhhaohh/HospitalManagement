@@ -1,8 +1,9 @@
-﻿using PatientManagement.Contexts;
-using PatientManagement.IServices;
-using PatientManagement.Models;
+﻿using Hospital.Domain.Models;
+using Hospital.Entityframework.Contexts;
+using Hostpital.Service.IServices;
+using Microsoft.Extensions.Logging;
 
-namespace PatientManagement.Services
+namespace Hostpital.Service.Services
 {
     public class GeographyService : IGeographyService
     {
