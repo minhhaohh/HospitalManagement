@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Provinces";
+}
+
+<div>
+    <table id="grid"></table>
+    <div id="pager"></div>
+</div>
+
+@section scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/redmond/jquery-ui.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/jquery.jqgrid.min.js"></script>
+    <script>
+        $(function () {
+            $("#grid").jqGrid
+                ({
+                    url: "/Province/GetData",
+                    datatype: 'json',
+                    mtype: 'Get',
+                    //table header name
+                    colNames: ['Code', 'Name', 'LevelName'],
+                    //colModel takes the data from controller and binds to grid
+                    colModel: [
+                        { name: "code" },
+                        { name: "name" },
+                        { name: "levelName" }
+                    ],
+                    caption: 'Provinces',
+                    pager: jQuery('#pager'),
+                    height: '100%',
+                    autowidth: true,
+                    rowNum: 10,
+                    rowList: [10, 20, 30, 50],
+                    viewrecords: true
+                })
+        });
+    </script>
+}
