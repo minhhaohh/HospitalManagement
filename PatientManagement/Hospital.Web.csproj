@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Hospital.Domain\Hospital.Domain.csproj" />
+	  <ProjectReference Include="..\Hospital.Entityframework\Hospital.Entityframework.csproj" />
+	  <ProjectReference Include="..\Hostpital.Services\Hostpital.Service.csproj" />
+	</ItemGroup>
+</Project>

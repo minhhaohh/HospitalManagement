@@ -1,4 +1,7 @@
-﻿using Hospital.Domain.Models;
+﻿using AutoMapper;
+using Hospital.Domain.DTO;
+using Hospital.Domain.Models;
+using Hospital.Domain.Objects;
 using Hospital.Entityframework.Contexts;
 using Hostpital.Service.IServices;
 using Microsoft.Extensions.Logging;
@@ -9,42 +12,59 @@ namespace Hostpital.Service.Services
     {
         private readonly ILogger<GeographyService> _logger;
 
-        private readonly PatientManagementContext _context;
+        private readonly HospitalContext _context;
 
-        public GeographyService(ILogger<GeographyService> logger, PatientManagementContext context)
+        private readonly IMapper _mapper;
+
+        public GeographyService(ILogger<GeographyService> logger, 
+            HospitalContext context,
+            IMapper mapper)
         {
             _logger = logger;
             _context = context;
+            _mapper = mapper;
         }
 
-        public List<Province> GetProvinces(int page, int rows)
+        public JqGridResult<ProvinceDto> GetProvinces(int page, int rows)
         {
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
             var result = _context.Set<Province>().AsQueryable();
+
+            int totalRecords = result.Count();
+            var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
+
             result = result.OrderBy(s => s.Code);
             result = result.Skip(pageIndex * pageSize).Take(pageSize);
-            return result.ToList();
+            return new JqGridResult<ProvinceDto>(totalPages, page, totalRecords, _mapper.Map<List<ProvinceDto>>(result.ToList()));
         }
 
-        public List<District> GetDistricts(int page, int rows)
+        public JqGridResult<DistrictDto> GetDistricts(int page, int rows)
         {
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
             var result = _context.Set<District>().AsQueryable();
+
+            int totalRecords = result.Count();
+            var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
+
             result = result.OrderBy(s => s.Code);
             result = result.Skip(pageIndex * pageSize).Take(pageSize);
-            return result.ToList();
+            return new JqGridResult<DistrictDto>(totalPages, page, totalRecords, _mapper.Map<List<DistrictDto>>(result.ToList()));
         }
 
-        public List<Ward> GetWards(int page, int rows)
+        public JqGridResult<WardDto> GetWards(int page, int rows)
         {
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
             var result = _context.Set<Ward>().AsQueryable();
+
+            int totalRecords = result.Count();
+            var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
+
             result = result.OrderBy(s => s.Code);
             result = result.Skip(pageIndex * pageSize).Take(pageSize);
-            return result.ToList();
+            return new JqGridResult<WardDto>(totalPages, page, totalRecords, _mapper.Map<List<WardDto>>(result.ToList()));
         }
     }
 }

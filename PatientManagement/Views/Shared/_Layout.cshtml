@@ -3,12 +3,23 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PatientManagement</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"] - Hospital</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/PatientManagement.styles.css" asp-append-version="true" />
+    @* <link rel="stylesheet" href="~/Hospital.styles.css" asp-append-version="true" /> *@
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Select2 -->
+    <link rel="stylesheet" href="~/lib/select2/css/select2.min.css">
+    <link rel="stylesheet" href="~/lib/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet" href="~/lib/adminlte/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+    <!-- JqGrid -->
+    <link rel="stylesheet" href="~/lib/jqgrid/css/ui.jqgrid.css">
+    <link rel="stylesheet" href="~/lib/jqgrid/css/ui.jqgrid-bootstrap4.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/lib/fontawesome-free/css/all.min.css">
+    <!-- Theme style -->
     <link rel="stylesheet" href="~/lib/adminlte/dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="~/lib/adminlte/plugins/fontawesome-free/css/all.min.css">
 </head>
 <body>
     <div class="wrapper">
@@ -20,7 +31,7 @@
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="#" class="nav-link">Home</a>
+                    <a href="/home" class="nav-link">Home</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="#" class="nav-link">Contact</a>
@@ -40,8 +51,8 @@
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
-                        <li class="nav-item menu-open">
-                            <a href="#" class="nav-link active">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>
                                     Geography
@@ -50,7 +61,7 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="/province" class="nav-link active">
+                                    <a href="/province" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Province</p>
                                     </a>
@@ -92,14 +103,27 @@
 
         <footer class="border-top footer text-muted">
             <div class="container">
-                &copy; 2024 - PatientManagement - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                &copy; 2024 - Hospital - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
             </div>
         </footer>
 
     </div>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <!-- jQuery -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Select2 -->
+    <script src="~/lib/select2/js/select2.full.min.js"></script>
+    <!-- InputMask -->
+    <script src="~/lib/moment/moment.min.js"></script>
+    <script src="~/lib/adminlte/plugins/inputmask/jquery.inputmask.min.js"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="~/lib/adminlte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <!-- JqGrid -->
+    <script src="~/lib/jqgrid/js/jquery.jqGrid.min.js"></script>
+    <script src="~/lib/jqgrid/js/i18n/grid.locale-en.js"></script>
+    <!-- AdminLTE App -->
     <script src="~/lib/adminlte/dist/js/adminlte.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

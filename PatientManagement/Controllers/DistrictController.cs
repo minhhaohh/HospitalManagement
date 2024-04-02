@@ -1,7 +1,7 @@
 ﻿using Hostpital.Service.IServices;
 using Microsoft.AspNetCore.Mvc;
 
-namespace PatientManagement.Controllers
+namespace Hospital.Controllers
 {
     public class DistrictController : Controller
     {
@@ -22,9 +22,9 @@ namespace PatientManagement.Controllers
 
         public IActionResult GetData(int page, int rows)
         {
-            var districts = _geographyService.GetDistricts(page, rows);
+            var data = _geographyService.GetDistricts(page, rows);
 
-            return Json(new { rows = districts });
+            return Json(data);
         }
     }
 }

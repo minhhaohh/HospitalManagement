@@ -8,10 +8,6 @@
 </div>
 
 @section scripts{
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/redmond/jquery-ui.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/jquery.jqgrid.min.js"></script>
     <script>
         $(function () {
             $("#grid").jqGrid
@@ -19,15 +15,12 @@
                     url: "/District/GetData",
                     datatype: 'json',
                     mtype: 'Get',
-                    //table header name
-                    colNames: ['Code', 'Name', 'Level Name', 'Province Code', 'Province Name'],
-                    //colModel takes the data from controller and binds to grid
                     colModel: [
-                        { name: "code" },
-                        { name: "name" },
-                        { name: "levelName" },
-                        { name: "province.code" },
-                        { name: "province.name" }
+                        { label: "Code", name: "code" },
+                        { label: "Name", name: "name" },
+                        { label: "Level Name", name: "levelName" },
+                        { label: "Province Code", name: "province.code" },
+                        { label: "Province Name", name: "province.name" }
                     ],
                     caption: 'Districts',
                     pager: jQuery('#pager'),

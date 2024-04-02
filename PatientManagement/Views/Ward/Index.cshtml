@@ -8,10 +8,6 @@
 </div>
 
 @section scripts {
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/redmond/jquery-ui.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/jquery.jqgrid.min.js"></script>
     <script>
         $(function () {
             $("#grid").jqGrid
@@ -19,17 +15,14 @@
                     url: "/Ward/GetData",
                     datatype: 'json',
                     mtype: 'Get',
-                    //table header name
-                    colNames: ['Code', 'Name', 'Level Name', 'District Code', 'District Name', 'Province Code', 'Province Name'],
-                    //colModel takes the data from controller and binds to grid
                     colModel: [
-                        { name: "code" },
-                        { name: "name" },
-                        { name: "levelName" },
-                        { name: "district.code" },
-                        { name: "district.name" },
-                        { name: "province.code" },
-                        { name: "province.name" }
+                        { label: "Code", name: "code" },
+                        { label: "Name", name: "name" },
+                        { label: "Level Name", name: "levelName" },
+                        { label: "District Code", name: "district.code" },
+                        { label: "District Name", name: "district.name" },
+                        { label: "Province Code", name: "province.code" },
+                        { label: "Province Name", name: "province.name" }
                     ],
                     caption: 'Wards',
                     pager: jQuery('#pager'),

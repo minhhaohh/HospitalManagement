@@ -1,13 +1,14 @@
-﻿using Hospital.Domain.Models;
+﻿using Hospital.Domain.DTO;
+using Hospital.Domain.Objects;
 
 namespace Hostpital.Service.IServices
 {
     public interface IGeographyService
     {
-        List<Province> GetProvinces(int page, int rows);
+        JqGridResult<ProvinceDto> GetProvinces(int page, int rows);
 
-        List<District> GetDistricts(int page, int rows);
+        JqGridResult<DistrictDto> GetDistricts(int page, int rows);
 
-        List<Ward> GetWards(int page, int rows);
+        JqGridResult<WardDto> GetWards(int page, int rows);
     }
 }

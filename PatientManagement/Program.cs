@@ -8,10 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<PatientManagementContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("PatientManagement")));
+builder.Services.AddDbContext<HospitalContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Hospital")));
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IGeographyService, GeographyService>();
+builder.Services.AddScoped<IPatientService, PatientService>();
 
 var app = builder.Build();
 
