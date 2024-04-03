@@ -25,7 +25,7 @@ namespace Hostpital.Service.Services
             _mapper = mapper;
         }
 
-        public JqGridResult<ProvinceDto> GetProvinces(int page, int rows)
+        public async Task<JqGridResult<ProvinceDto>> GetProvincesForJqGridAsync(int page, int rows)
         {
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
@@ -36,10 +36,10 @@ namespace Hostpital.Service.Services
 
             result = result.OrderBy(s => s.Code);
             result = result.Skip(pageIndex * pageSize).Take(pageSize);
-            return new JqGridResult<ProvinceDto>(totalPages, page, totalRecords, _mapper.Map<List<ProvinceDto>>(result.ToList()));
+            return new JqGridResult<ProvinceDto>(totalPages, page, totalRecords, _mapper.ProjectTo<ProvinceDto>(result).ToList());
         }
 
-        public JqGridResult<DistrictDto> GetDistricts(int page, int rows)
+        public async Task<JqGridResult<DistrictDto>> GetDistrictsForJqGridAsync(int page, int rows)
         {
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
@@ -50,10 +50,10 @@ namespace Hostpital.Service.Services
 
             result = result.OrderBy(s => s.Code);
             result = result.Skip(pageIndex * pageSize).Take(pageSize);
-            return new JqGridResult<DistrictDto>(totalPages, page, totalRecords, _mapper.Map<List<DistrictDto>>(result.ToList()));
+            return new JqGridResult<DistrictDto>(totalPages, page, totalRecords, _mapper.ProjectTo<DistrictDto>(result).ToList());
         }
 
-        public JqGridResult<WardDto> GetWards(int page, int rows)
+        public async Task<JqGridResult<WardDto>> GetWardsForJqGridAsync(int page, int rows)
         {
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
@@ -64,7 +64,7 @@ namespace Hostpital.Service.Services
 
             result = result.OrderBy(s => s.Code);
             result = result.Skip(pageIndex * pageSize).Take(pageSize);
-            return new JqGridResult<WardDto>(totalPages, page, totalRecords, _mapper.Map<List<WardDto>>(result.ToList()));
+            return new JqGridResult<WardDto>(totalPages, page, totalRecords, _mapper.ProjectTo<WardDto>(result).ToList());
         }
     }
 }

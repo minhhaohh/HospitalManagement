@@ -1,21 +1,22 @@
 ﻿using Hospital.Domain.DTO;
+using Hospital.Domain.Objects;
 
 namespace Hostpital.Service.IServices
 {
     public interface IPatientService
     {
-        List<PatientDto> GetPatients();
+        Task<List<PatientDto>> GetPatientsAsync();
 
-        PatientDto GetPatientByChartNumber(string chartNumber);
+        Task<JqGridResult<PatientDto>> GetPatientsForJqGridAsync(int page, int rows);
 
-        string GetNewChartNumber();
+        Task<PatientDto> GetPatientByChartNumberAsync(string chartNumber);
 
-        int GetMaxChartNumberPatient();
+        Task<string> GetNewChartNumberAsync();
 
-        void Create(PatientCreateDto patient);
+        Task CreateAsync(PatientCreateDto patient);
 
-        void Update();
+        Task UpdateAsync(string chartNumber, PatientUpdateDto patient);
 
-        void Delete();
+        Task DeleteAsync();
     }
 }

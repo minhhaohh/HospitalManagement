@@ -5,10 +5,10 @@ namespace Hostpital.Service.IServices
 {
     public interface IGeographyService
     {
-        JqGridResult<ProvinceDto> GetProvinces(int page, int rows);
+        Task<JqGridResult<ProvinceDto>> GetProvincesForJqGridAsync(int page, int rows);
 
-        JqGridResult<DistrictDto> GetDistricts(int page, int rows);
+        Task<JqGridResult<DistrictDto>> GetDistrictsForJqGridAsync(int page, int rows);
 
-        JqGridResult<WardDto> GetWards(int page, int rows);
+        Task<JqGridResult<WardDto>> GetWardsForJqGridAsync(int page, int rows);
     }
 }

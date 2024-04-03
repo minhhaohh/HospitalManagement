@@ -4,9 +4,9 @@ using Hospital.Domain.Models;
 
 namespace Hospital.Domain
 {
-    public class AutoMapperConfig : Profile
+    public class AutoMapperProfile : Profile
     {
-        public AutoMapperConfig() 
+        public AutoMapperProfile() 
         {
             CreateMap<Province, ProvinceDto>();
             CreateMap<District, DistrictDto>();

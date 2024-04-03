@@ -20,9 +20,9 @@ namespace Hospital.Controllers
             return View();
         }
 
-        public IActionResult GetData(int page, int rows)
+        public async Task<JsonResult> GetData(int page, int rows)
         {
-            var data = _geographyService.GetWards(page, rows);
+            var data = await _geographyService.GetWardsForJqGridAsync(page, rows);
 
             return Json(data);
         }

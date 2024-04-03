@@ -32,23 +32,8 @@
 
         public string ZipCode { get; set; }
 
-        public Patient() { }
-
-        public Patient(string chartNumber, string firstName, string lastName, string gender,
-            DateTime dob, string phone, string email, string address, string wardCode,
-            string districtCode, string provinceCode, string zipCode)
-        {
-            ChartNumber = chartNumber;
-            FirstName = firstName;
-            LastName = lastName;
-            Gender = gender;
-            Phone = phone;
-            Email = email;
-            Address = address;
-            WardCode = wardCode;
-            DistrictCode = districtCode;
-            ProvinceCode = provinceCode;
-            ZipCode = zipCode;
+        public Patient() 
+        { 
         }
     }
 }

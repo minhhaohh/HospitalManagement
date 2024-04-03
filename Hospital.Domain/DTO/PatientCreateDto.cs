@@ -22,15 +22,9 @@ namespace Hospital.Domain.DTO
 
         public string WardCode { get; set; }
 
-        public Ward Ward { get; set; }
-
         public string DistrictCode { get; set; }
 
-        public District District { get; set; }
-
         public string ProvinceCode { get; set; }
-
-        public Province Province { get; set; }
 
         public string ZipCode { get; set; }
     }

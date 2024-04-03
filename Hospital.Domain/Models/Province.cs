@@ -12,18 +12,6 @@
 
         public Province()
         {
-            Code = string.Empty;
-            Name = string.Empty;
-            LevelName = string.Empty;
-            Districts = new List<District>();
-        }
-
-        public Province(string code, string name, string levelName)
-        {
-            Code = code;
-            Name = name;
-            LevelName = levelName;
-            Districts = new List<District>();
         }
     }
 }

@@ -1,3 +1,4 @@
+using Hospital.Domain;
 using Hospital.Entityframework.Contexts;
 using Hostpital.Service.IServices;
 using Hostpital.Service.Services;
@@ -11,7 +12,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<HospitalContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Hospital")));
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 builder.Services.AddScoped<IGeographyService, GeographyService>();
 builder.Services.AddScoped<IPatientService, PatientService>();

@@ -4,52 +4,75 @@
 }
 @model PatientViewModel;
 
+
 <h2>Patients</h2>
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" onClick="OpenNewModal()">
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#patientModal">
     Create Patient
 </button>
+<div>
+    <table id="grid"></table>
+    <div id="pager"></div>
+</div>
 <!-- Modal -->
-@Html.Partial("_PatientModal")
+<partial name="_PatientModalPartial.cshtml" for="@Model">
 
-@section scripts {
-    <script>
-        $(function () {
-            //Date picker
-            $('#reservationdate').datetimepicker({
-                format: 'L'
-            });
-        })
+    @section scripts {
+        <script>
+            $(function () {
+                //Date picker
+                $('#reservationdate').datetimepicker({
+                    format: 'L'
+                });
 
-        function OpenNewModal() {
-            $('#patientModal').modal('show')
-        }
+                $("#grid").jqGrid
+                    ({
+                        url: "/Patient/GetData",
+                        datatype: 'json',
+                        mtype: 'Get',
+                        colModel: [
+                            { label: "Chart Number", name: "chartNumber" },
+                            { label: "First Name", name: "firstName" },
+                            { label: "Last Name", name: "lastName" },
+                            { label: "Gender", name: "gender" },
+                            { label: "Date of birth", name: "dob", formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                            { label: "Phone", name: "phone" },
+                            { label: "Email", name: "email" },
+                            { label: "Address", name: "address" }
+                        ],
+                        caption: 'Patients',
+                        pager: jQuery('#pager'),
+                        height: '100%',
+                        autowidth: true,
+                        rowNum: 10,
+                        rowList: [10, 20, 30, 50],
+                        viewrecords: true
+                    })
+            })
 
-        function SaveChanges() {
-            $.ajax({
-                url: '/Patient/Create',
-                type: 'POST',
-                data: {
-                    chartNumber: 'BN01',
-                    firstName: 'Hao',
-                    lastName: 'Tran',
-                    gender: 'male',
-                    dob: '01-01-2000',
-                    phone: '',
-                    email: '',
-                    address: '',
-                    wardCode: '',
-                    districtCode: '',
-                    provinceCode: '',
-                    zipCode: ''
-                },
-                success: function (response) {
-                    console.log(response)
-                },
-                error: function (xhr, status, error) {
-                    console.log(status)
-                }
-            });
-        }
-    </script>
-}
+            function SaveChanges() {
+                var formData = $("#form-info").serialize();
+                console.log(formData);
+                $.ajax({
+                    url: '/Patient/Create',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        if (response == null || response == undefined) {
+                            toastr.error("Error system!!!");
+                        }
+                        else if (response != '') {
+                            toastr.error(response);
+                        }
+                        else {
+                            toastr.success("Created successfully.");
+                            location.reload();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        toastr.error(error)
+                    }
+                });
+            }
+        </script>
+    }
