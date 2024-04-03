@@ -30,21 +30,21 @@ namespace Hospital.Controllers
             var patientViewModel = new PatientViewModel();
             patientViewModel.ChartNumber = await _patientService.GetNewChartNumberAsync();
 
-            var wards = (await _geographyService.GetWardsForJqGridAsync(1, 10)).rows;
+            var wards = (await _geographyService.GetWardsAsync());
             patientViewModel.Wards =
             [
                 new SelectListItem() { Value = string.Empty, Text = string.Empty },
                 .. wards.Select(x => new SelectListItem { Value = x.Code, Text = x.Name }).ToList(),
             ];
 
-            var districts = (await _geographyService.GetDistrictsForJqGridAsync(1, 10)).rows;
+            var districts = (await _geographyService.GetDistrictsAsync());
             patientViewModel.Districts =
             [
                 new SelectListItem() { Value = string.Empty, Text = string.Empty },
                 .. districts.Select(x => new SelectListItem { Value = x.Code, Text = x.Name }).ToList(),
             ];
 
-            var provinces = (await _geographyService.GetProvincesForJqGridAsync(1, 10)).rows;
+            var provinces = (await _geographyService.GetProvincesAsync());
             patientViewModel.Provinces =
             [
                 new SelectListItem() { Value = string.Empty, Text = string.Empty },

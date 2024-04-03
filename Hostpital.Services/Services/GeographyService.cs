@@ -4,6 +4,7 @@ using Hospital.Domain.Models;
 using Hospital.Domain.Objects;
 using Hospital.Entityframework.Contexts;
 using Hostpital.Service.IServices;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Hostpital.Service.Services
@@ -23,6 +24,21 @@ namespace Hostpital.Service.Services
             _logger = logger;
             _context = context;
             _mapper = mapper;
+        }
+
+        public async Task<List<ProvinceDto>> GetProvincesAsync()
+        {
+            return await _mapper.ProjectTo<ProvinceDto>(_context.Set<Province>()).ToListAsync();
+        }
+
+        public async Task<List<DistrictDto>> GetDistrictsAsync()
+        {
+            return await _mapper.ProjectTo<DistrictDto>(_context.Set<District>()).ToListAsync();
+        }
+
+        public async Task<List<WardDto>> GetWardsAsync()
+        {
+            return await _mapper.ProjectTo<WardDto>(_context.Set<Ward>()).ToListAsync();
         }
 
         public async Task<JqGridResult<ProvinceDto>> GetProvincesForJqGridAsync(int page, int rows)

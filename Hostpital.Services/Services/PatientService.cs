@@ -29,7 +29,7 @@ namespace Hostpital.Service.Services
 
         public async Task<List<PatientDto>> GetPatientsAsync()
         {
-            return _mapper.ProjectTo<PatientDto>(_context.Set<Patient>()).ToList();
+            return await _mapper.ProjectTo<PatientDto>(_context.Set<Patient>()).ToListAsync();
         }
 
         public async Task<JqGridResult<PatientDto>> GetPatientsForJqGridAsync(int page, int rows)
