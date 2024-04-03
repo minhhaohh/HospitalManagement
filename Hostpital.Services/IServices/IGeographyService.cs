@@ -11,10 +11,10 @@ namespace Hostpital.Service.IServices
 
         Task<List<WardDto>> GetWardsAsync();
 
-        Task<JqGridResult<ProvinceDto>> GetProvincesForJqGridAsync(int page, int rows);
+        Task<IPagedList<ProvinceDto>> SearchProvincesAsync(PagingParams paging);
 
-        Task<JqGridResult<DistrictDto>> GetDistrictsForJqGridAsync(int page, int rows);
+        Task<IPagedList<DistrictDto>> SearchDistrictsAsync(PagingParams paging);
 
-        Task<JqGridResult<WardDto>> GetWardsForJqGridAsync(int page, int rows);
+        Task<IPagedList<WardDto>> SearchWardsAsync(PagingParams paging);
     }
 }

@@ -57,9 +57,9 @@
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <label>Date of birth:</label>
-                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                            <input asp-for="Dob" type="text" class="form-control datetimepicker-input" data-target="#reservationdate" />
-                                            <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                        <div class="input-group date" id="info-dob-date" data-target-input="nearest">
+                                            <input asp-for="Dob" type="text" class="form-control datetimepicker-input" data-target="#info-dob-date" placeholder="mm/dd/yyyy" />
+                                            <div class="input-group-append" data-target="#info-dob-date" data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>
                                         </div>
@@ -94,7 +94,8 @@
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <label>Ward</label>
-                                        <select asp-for="WardCode" asp-items="Model.Wards" class="form-control select2" style="width: 100%;">
+                                        <select asp-for="WardCode" asp-items="Model.Wards" class="form-control select2">
+                                            <option></option>
                                         </select>
                                     </div>
                                 </div>
@@ -103,7 +104,8 @@
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <label>District</label>
-                                        <select asp-for="DistrictCode" asp-items="Model.Districts" class="form-control select2" style="width: 100%;">
+                                        <select asp-for="DistrictCode" asp-items="Model.Districts" class="form-control select2">
+                                            <option></option>
                                         </select>
                                     </div>
                                 </div>
@@ -112,8 +114,17 @@
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <label>Province</label>
-                                        <select asp-for="ProvinceCode" asp-items="Model.Provinces" class="form-control select2" style="width: 100%;">
+                                        <select asp-for="ProvinceCode" asp-items="Model.Provinces" class="form-control select2">
+                                            <option></option>
                                         </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="zipCode">Zip Code</label>
+                                        <input asp-for="ZipCode" type="text" class="form-control" placeholder="Zip Code">
                                     </div>
                                 </div>
                             </div>

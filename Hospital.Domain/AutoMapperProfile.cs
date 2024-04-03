@@ -13,7 +13,8 @@ namespace Hospital.Domain
             CreateMap<Ward, WardDto>();
 
             CreateMap<Patient, PatientDto>();
-            CreateMap<Patient, PatientCreateDto>();
+            CreateMap<PatientCreateDto, Patient>();
+            CreateMap<PatientUpdateDto, Patient>();
         }
     }
 }

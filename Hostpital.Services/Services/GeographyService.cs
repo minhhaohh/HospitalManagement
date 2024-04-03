@@ -41,46 +41,85 @@ namespace Hostpital.Service.Services
             return await _mapper.ProjectTo<WardDto>(_context.Set<Ward>()).ToListAsync();
         }
 
-        public async Task<JqGridResult<ProvinceDto>> GetProvincesForJqGridAsync(int page, int rows)
+        public async Task<IPagedList<ProvinceDto>> SearchProvincesAsync(PagingParams paging)
         {
-            int pageIndex = Convert.ToInt32(page) - 1;
-            int pageSize = rows;
-            var result = _context.Set<Province>().AsQueryable();
+            try
+            {
+                var data = _context.Set<Province>().AsQueryable();
 
-            int totalRecords = result.Count();
-            var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
+                int totalRecords = data.Count();
+                var totalPages = (int)Math.Ceiling((float)totalRecords / (float)paging.PageSize);
 
-            result = result.OrderBy(s => s.Code);
-            result = result.Skip(pageIndex * pageSize).Take(pageSize);
-            return new JqGridResult<ProvinceDto>(totalPages, page, totalRecords, _mapper.ProjectTo<ProvinceDto>(result).ToList());
+                data = data.OrderBy(s => s.Code);
+                data = data.Skip(paging.PageIndex * paging.PageSize).Take(paging.PageSize);
+
+                return new PagedList<ProvinceDto>(
+                    _mapper.ProjectTo<ProvinceDto>(data).ToList(),
+                    paging.PageIndex,
+                    paging.PageSize,
+                    totalRecords
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+
+            return null;
         }
 
-        public async Task<JqGridResult<DistrictDto>> GetDistrictsForJqGridAsync(int page, int rows)
+        public async Task<IPagedList<DistrictDto>> SearchDistrictsAsync(PagingParams paging)
         {
-            int pageIndex = Convert.ToInt32(page) - 1;
-            int pageSize = rows;
-            var result = _context.Set<District>().AsQueryable();
+            try
+            {
+                var data = _context.Set<District>().AsQueryable();
 
-            int totalRecords = result.Count();
-            var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
+                int totalRecords = data.Count();
+                var totalPages = (int)Math.Ceiling((float)totalRecords / (float)paging.PageSize);
 
-            result = result.OrderBy(s => s.Code);
-            result = result.Skip(pageIndex * pageSize).Take(pageSize);
-            return new JqGridResult<DistrictDto>(totalPages, page, totalRecords, _mapper.ProjectTo<DistrictDto>(result).ToList());
+                data = data.OrderBy(s => s.Code);
+                data = data.Skip(paging.PageIndex * paging.PageSize).Take(paging.PageSize);
+
+                return new PagedList<DistrictDto>(
+                    _mapper.ProjectTo<DistrictDto>(data).ToList(),
+                    paging.PageIndex,
+                    paging.PageSize,
+                    totalRecords
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+
+            return null;
         }
 
-        public async Task<JqGridResult<WardDto>> GetWardsForJqGridAsync(int page, int rows)
+        public async Task<IPagedList<WardDto>> SearchWardsAsync(PagingParams paging)
         {
-            int pageIndex = Convert.ToInt32(page) - 1;
-            int pageSize = rows;
-            var result = _context.Set<Ward>().AsQueryable();
+            try
+            {
+                var data = _context.Set<Ward>().AsQueryable();
 
-            int totalRecords = result.Count();
-            var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
+                int totalRecords = data.Count();
+                var totalPages = (int)Math.Ceiling((float)totalRecords / (float)paging.PageSize);
 
-            result = result.OrderBy(s => s.Code);
-            result = result.Skip(pageIndex * pageSize).Take(pageSize);
-            return new JqGridResult<WardDto>(totalPages, page, totalRecords, _mapper.ProjectTo<WardDto>(result).ToList());
+                data = data.OrderBy(s => s.Code);
+                data = data.Skip(paging.PageIndex * paging.PageSize).Take(paging.PageSize);
+
+                return new PagedList<WardDto>(
+                    _mapper.ProjectTo<WardDto>(data).ToList(),
+                    paging.PageIndex,
+                    paging.PageSize,
+                    totalRecords
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+
+            return null;
         }
     }
 }

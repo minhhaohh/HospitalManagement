@@ -5,9 +5,9 @@ namespace Hostpital.Service.IServices
 {
     public interface IPatientService
     {
-        Task<List<PatientDto>> GetPatientsAsync();
+        Task<List<PatientDto>> GetAllPatientsAsync();
 
-        Task<JqGridResult<PatientDto>> GetPatientsForJqGridAsync(int page, int rows);
+        Task<IPagedList<PatientDto>> SearchPatientsAsync(PatientQuery condition, PagingParams paging);
 
         Task<PatientDto> GetPatientByChartNumberAsync(string chartNumber);
 
@@ -15,7 +15,7 @@ namespace Hostpital.Service.IServices
 
         Task CreateAsync(PatientCreateDto patient);
 
-        Task UpdateAsync(string chartNumber, PatientUpdateDto patient);
+        Task<bool> UpdateAsync(string chartNumber, PatientUpdateDto patient);
 
         Task DeleteAsync();
     }

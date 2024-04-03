@@ -1,4 +1,7 @@
+using FluentValidation;
 using Hospital.Domain;
+using Hospital.Domain.DTO;
+using Hospital.Domain.Validations;
 using Hospital.Entityframework.Contexts;
 using Hostpital.Service.IServices;
 using Hostpital.Service.Services;
@@ -16,6 +19,8 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 builder.Services.AddScoped<IGeographyService, GeographyService>();
 builder.Services.AddScoped<IPatientService, PatientService>();
+
+builder.Services.AddScoped<IValidator<PatientCreateDto>, PatientValidator>();
 
 var app = builder.Build();
 

@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-
-namespace Hospital.Web.Models
+﻿namespace Hospital.Domain.Objects
 {
-    public class PatientViewModel
+    public class PatientQuery
     {
         public string ChartNumber { get; set; }
 
@@ -12,7 +10,7 @@ namespace Hospital.Web.Models
 
         public string Gender { get; set; }
 
-        public DateTime Dob { get; set; } = DateTime.Now;
+        public DateTime? Dob { get; set; }
 
         public string Phone { get; set; }
 
@@ -27,17 +25,5 @@ namespace Hospital.Web.Models
         public string ProvinceCode { get; set; }
 
         public string ZipCode { get; set; }
-
-        public FilterPatientViewModel Filter { get; set; }
-
-        public List<SelectListItem> Wards { get; set; }
-
-        public List<SelectListItem> Districts { get; set; }
-
-        public List<SelectListItem> Provinces { get; set; }
-
-        public PatientViewModel()
-        {
-        }
     }
 }

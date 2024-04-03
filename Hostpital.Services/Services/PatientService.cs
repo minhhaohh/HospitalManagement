@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using Azure;
 using Hospital.Domain.Consts;
 using Hospital.Domain.DTO;
+using Hospital.Domain.Extensions;
 using Hospital.Domain.Models;
 using Hospital.Domain.Objects;
 using Hospital.Entityframework.Contexts;
 using Hostpital.Service.IServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Hostpital.Service.Services
 {
@@ -27,23 +30,48 @@ namespace Hostpital.Service.Services
             _mapper = mapper;
         }
 
-        public async Task<List<PatientDto>> GetPatientsAsync()
+        public async Task<List<PatientDto>> GetAllPatientsAsync()
         {
             return await _mapper.ProjectTo<PatientDto>(_context.Set<Patient>()).ToListAsync();
         }
 
-        public async Task<JqGridResult<PatientDto>> GetPatientsForJqGridAsync(int page, int rows)
+        public async Task<IPagedList<PatientDto>> SearchPatientsAsync(PatientQuery condition, PagingParams paging)
         {
-            int pageIndex = Convert.ToInt32(page) - 1;
-            int pageSize = rows;
-            var result = _context.Set<Patient>().AsQueryable();
+            try
+            {
+                var patients = _context.Set<Patient>()
+                    .WhereIf(condition.ChartNumber.HasValue(), x => x.ChartNumber == condition.ChartNumber)
+                    .WhereIf(condition.FirstName.HasValue(), x => x.FirstName.Contains(condition.FirstName))
+                    .WhereIf(condition.LastName.HasValue(), x => x.LastName.Contains(condition.LastName))
+                    .WhereIf(condition.Gender.HasValue(), x => x.ChartNumber == condition.Gender)
+                    .WhereIf(condition.Dob != null, x => x.Dob == condition.Dob)
+                    .WhereIf(condition.Phone.HasValue(), x => x.Phone.Contains(condition.Phone))
+                    .WhereIf(condition.Email.HasValue(), x => x.Email.Contains(condition.Email))
+                    .WhereIf(condition.Address.HasValue(), x => x.Address.Contains(condition.Address))
+                    .WhereIf(condition.WardCode.HasValue(), x => x.WardCode == condition.WardCode)
+                    .WhereIf(condition.DistrictCode.HasValue(), x => x.DistrictCode == condition.DistrictCode)
+                    .WhereIf(condition.ProvinceCode.HasValue(), x => x.ProvinceCode == condition.ProvinceCode)
+                    .WhereIf(condition.ZipCode.HasValue(), x => x.ZipCode == condition.ZipCode);
 
-            int totalRecords = result.Count();
-            var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
+                int totalRecords = patients.Count();
+                var totalPages = (int)Math.Ceiling((float)totalRecords / (float)paging.PageSize);
 
-            result = result.OrderBy(s => s.ChartNumber);
-            result = result.Skip(pageIndex * pageSize).Take(pageSize);
-            return new JqGridResult<PatientDto>(totalPages, page, totalRecords, _mapper.ProjectTo<PatientDto>(result).ToList());
+                patients = patients.OrderBy(s => s.ChartNumber);
+                patients = patients.Skip(paging.PageIndex * paging.PageSize).Take(paging.PageSize);
+
+                return new PagedList<PatientDto>(
+                    _mapper.ProjectTo<PatientDto>(patients).ToList(),
+                    paging.PageIndex,
+                    paging.PageSize,
+                    totalRecords
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+            
+            return null;
         }
 
         public async Task<PatientDto> GetPatientByChartNumberAsync(string chartNumber)
@@ -56,8 +84,7 @@ namespace Hostpital.Service.Services
         public async Task<string> GetNewChartNumberAsync()
         {
             var lastPatient = _context.Set<Patient>()
-                .OrderBy(x => x.ChartNumber)
-                .Take(1)
+                .OrderByDescending(x => x.ChartNumber)
                 .FirstOrDefault();
             var maxNumber = lastPatient == null ? 0 : int.Parse(lastPatient.ChartNumber.Replace(ChartNumber.Prefix, ""));
             return ChartNumber.Prefix + (maxNumber + 1).ToString($"D{ChartNumber.Lenght - ChartNumber.Prefix.Length}");
@@ -65,45 +92,37 @@ namespace Hostpital.Service.Services
 
         public async Task CreateAsync(PatientCreateDto patient)
         {
-            _context.Set<Patient>().Add(
-                new Patient()
-                {
-                    ChartNumber = patient.ChartNumber, 
-                    FirstName = patient.FirstName,
-                    LastName = patient.LastName,
-                    Gender = patient.Gender,
-                    Dob = patient.Dob, 
-                    Phone = patient.Phone,
-                    Email = patient.Email, 
-                    Address = patient.Address, 
-                    WardCode = patient.WardCode,
-                    DistrictCode = patient.DistrictCode,
-                    ProvinceCode = patient.ProvinceCode, 
-                    ZipCode = patient.ZipCode
-                });
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Set<Patient>().Add(_mapper.Map<Patient>(patient));
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
         }
 
-        public async Task UpdateAsync(string chartNumber, PatientUpdateDto patient)
+        public async Task<bool> UpdateAsync(string chartNumber, PatientUpdateDto patient)
         {
-            var existed = await _context.Set<Patient>()
+            try
+            {
+                var existed = await _context.Set<Patient>()
                 .FirstOrDefaultAsync(x => x.ChartNumber == chartNumber);
 
-            if (existed == null)
-                return;
+                if (existed == null)
+                    return false;
 
-            existed.FirstName = patient.FirstName;
-            existed.LastName = patient.LastName;
-            existed.Gender = patient.Gender;
-            existed.Dob = patient.Dob;
-            existed.Phone = patient.Phone;
-            existed.Email = patient.Email;
-            existed.Address = patient.Address;
-            existed.WardCode = patient.WardCode;
-            existed.DistrictCode = patient.DistrictCode;
-            existed.ProvinceCode = patient.ProvinceCode;
+                existed = _mapper.Map<Patient>(patient);
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message}");
+                return false;
+            }
+            return true;
         }
 
         public async Task DeleteAsync()

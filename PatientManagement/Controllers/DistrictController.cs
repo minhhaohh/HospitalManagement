@@ -1,4 +1,6 @@
-﻿using Hostpital.Service.IServices;
+﻿using Hospital.Domain.Objects;
+using Hostpital.Service.IServices;
+using Hostpital.Service.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hospital.Controllers
@@ -21,9 +23,11 @@ namespace Hospital.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetDataJqGrid(int page, int rows)
+        public async Task<JsonResult> InitializeGrid(int page, int rows)
         {
-            var data = await _geographyService.GetDistrictsForJqGridAsync(page, rows);
+            var paging = new PagingParams() { PageIndex = page - 1, PageSize = rows };
+
+            var data = await _geographyService.SearchDistrictsAsync(paging);
 
             return Json(data);
         }
