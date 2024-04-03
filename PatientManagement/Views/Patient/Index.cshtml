@@ -2,112 +2,10 @@
 @{
     ViewData["Title"] = "Patients";
 }
-@model PatientViewModel;
+@model FilterPatientViewModel;
 
 <h2>Patients</h2>
-<div class"row">
-    <div class="col-lg-12">
-        <form id="filter-form">
-            <div class="row">
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label for="chartNumber">Chart Number</label>
-                        <input asp-for="Filter.ChartNumber" type="text" class="form-control" placeholder="Chart Number">
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="firstName">First Name</label>
-                                <input asp-for="Filter.FirstName" type="text" class="form-control" placeholder="First Name">
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="lastName">Last Name</label>
-                                <input asp-for="Filter.LastName" type="text" class="form-control" placeholder="Last Name">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>Gender</label>
-                        <select asp-for="Filter.Gender" class="form-control select2">
-                            <option value="">---All---</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>Date of birth:</label>
-                        <div class="input-group date" id="filter-dob-date" data-target-input="nearest">
-                            <input asp-for="Filter.Dob" type="text" class="form-control datetimepicker-input" data-target="#filter-dob-date" placeholder="mm/dd/yyyy" />
-                            <div class="input-group-append" data-target="#filter-dob-date" data-toggle="datetimepicker">
-                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label for="phone">Phone</label>
-                        <input asp-for="Filter.Phone" type="text" class="form-control" placeholder="Phone">
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input asp-for="Filter.Email" type="text" class="form-control" placeholder="Email">
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="address">Address</label>
-                        <input asp-for="Filter.Address" type="text" class="form-control" placeholder="Address">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>Ward</label>
-                        <select asp-for="Filter.WardCode" asp-items="Model.Wards" class="form-control select2">
-                            <option value="">---All---</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>District</label>
-                        <select asp-for="Filter.DistrictCode" asp-items="Model.Districts" class="form-control select2">
-                            <option value="">---All---</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>Province</label>
-                        <select asp-for="Filter.ProvinceCode" asp-items="Model.Provinces" class="form-control select2">
-                            <option value="">---All---</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label for="zipCode">Zip Code</label>
-                        <input asp-for="Filter.ZipCode" type="text" class="form-control" placeholder="ZipCode">
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
+<partial name="_FilterPartientPartial.cshtml" for="@Model" />
 <div class="row">
     <div class="col-lg-12 text-right">
         <button type="button" class="btn btn-success ml-2" onClick="FilterData()">
@@ -116,107 +14,123 @@
         <button type="button" class="btn btn-warning ml-2" onClick="ClearFilter()">
             Clear
         </button>
-        <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#patientModal">
+        <button type="button" class="btn btn-primary ml-2" onclick="OpenCreateNew()">
             Create New
         </button>
     </div>
 </div>
-
 <div>
     <table id="grid"></table>
     <div id="pager"></div>
 </div>
 <!-- Modal -->
-<partial name="_PatientModalPartial.cshtml" for="@Model">
+@* <partial name="_PatientModalPartial.cshtml"> *@
+<div class="modal fade" id="patientModal" tabindex="-1" aria-hidden="true">
+</div>
+@section scripts {
+    <script>
+        $(function () {
+            //Date picker
+            $('#filter-dob-date').datetimepicker({
+                format: 'L'
+            });
+            $("#grid").jqGrid
+                ({
+                    url: "/Patient/InitializeGrid",
+                    datatype: 'json',
+                    mtype: 'Get',
+                    colModel: [
+                        { label: "Chart Number", name: "chartNumber" },
+                        { label: "First Name", name: "firstName" },
+                        { label: "Last Name", name: "lastName" },
+                        { label: "Gender", name: "gender" },
+                        { label: "Date of birth", name: "dob", formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
+                        { label: "Phone", name: "phone" },
+                        { label: "Email", name: "email" },
+                        { label: "Address", name: "address" }
+                    ],
+                    caption: 'Patients',
+                    pager: jQuery('#pager'),
+                    height: '100%',
+                    autowidth: true,
+                    rowNum: 10,
+                    rowList: [10, 20, 30, 50],
+                    viewrecords: true
+                })
+        })
 
-    @section scripts {
-        <script>
-            $(function () {
-                //Date picker
-                $('#filter-dob-date').datetimepicker({
-                    format: 'L'
-                });
-                $('#info-dob-date').datetimepicker({
-                    format: 'L'
-                });
-                $("#grid").jqGrid
-                    ({
-                        url: "/Patient/InitializeGrid",
-                        datatype: 'json',
-                        mtype: 'Get',
-                        colModel: [
-                            { label: "Chart Number", name: "chartNumber" },
-                            { label: "First Name", name: "firstName" },
-                            { label: "Last Name", name: "lastName" },
-                            { label: "Gender", name: "gender" },
-                            { label: "Date of birth", name: "dob", formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
-                            { label: "Phone", name: "phone" },
-                            { label: "Email", name: "email" },
-                            { label: "Address", name: "address" }
-                        ],
-                        caption: 'Patients',
-                        pager: jQuery('#pager'),
-                        height: '100%',
-                        autowidth: true,
-                        rowNum: 10,
-                        rowList: [10, 20, 30, 50],
-                        viewrecords: true
-                    })
-            })
+        function FilterData() {
+            var filterFormData = $("#filter-form").serialize();
+            $.ajax({
+                url: '/Patient/GetDataFilter',
+                dataType: 'json',
+                data: filterFormData,
+                success: function (response) {
+                    // Handle successful response, populate jqGrid with data
+                    jQuery("#grid")
+                        .jqGrid('setGridParam',
+                            {
+                                datatype: 'local',
+                                data: response.rows
+                            })
+                        .trigger("reloadGrid");
+                },
+                error: function (response) {
+                    // Handle error
+                    toastr.error(response.responseText);
+                }
+            });
+        }
 
-            function FilterData() {
-                var filterFormData = $("#filter-form").serialize();
-                $.ajax({
-                    url: '/Patient/GetDataFilter',
-                    dataType: 'json',
-                    data: filterFormData,
-                    success: function (response) {
-                        // Handle successful response, populate jqGrid with data
-                        jQuery("#grid")
-                            .jqGrid('setGridParam',
-                                {
-                                    datatype: 'local',
-                                    data: response.rows
-                                })
-                            .trigger("reloadGrid");
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle error
-                        toastr.error(error)
+        function ClearFilter() {
+
+        }
+
+        function OpenCreateNew() {
+            $.ajax({
+                type: "GET",
+                url: "/Patient/OpenNewDialog",
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $("#patientModal").html(response);
+                    //Date picker
+                    $('#info-dob-date').datetimepicker({
+                        format: 'L'
+                    });
+                    $("#patientModal").modal('show');
+                },
+                error: function (response) {
+                    toastr.error(response.responseText);
+                }
+            });
+        }
+
+        function SaveChanges() {
+            var formData = $("#form-info").serialize();
+            $.ajax({
+                url: '/Patient/Create',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    if (response == null || response == undefined) {
+                        toastr.error("Error system!!!");
                     }
-                });
-            }
-
-            function ClearFilter() {
-
-            }
-
-            function SaveChanges() {
-                var formData = $("#form-info").serialize();
-                $.ajax({
-                    url: '/Patient/Create',
-                    type: 'POST',
-                    data: formData,
-                    success: function (response) {
-                        console.log(response.length)
-                        if (response == null || response == undefined) {
-                            toastr.error("Error system!!!");
+                    else if (response.length > 0) {
+                        for (let message of response) {
+                            toastr.error(message);
                         }
-                        else if (response.length > 0) {
-                            for (let message of response) {
-                                toastr.error(message);
-                            }
-                        }
-                        else {
-                            toastr.success("Created successfully.");
-                            $("#patientModal").modal('hide');
-                            $('#grid').trigger('reloadGrid');
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        toastr.error(error)
                     }
-                });
-            }
-        </script>
-    }
+                    else {
+                        toastr.success("Created successfully.");
+                        $("#patientModal").modal('hide');
+                        $('#grid').trigger('reloadGrid');
+                    }
+                },
+                error: function (response) {
+                    toastr.error(response.responseText);
+                }
+            });
+        }
+    </script>
+}

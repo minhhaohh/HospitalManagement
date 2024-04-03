@@ -1,8 +1,6 @@
 ﻿using FluentValidation;
-using FluentValidation.Results;
 using Hospital.Domain.DTO;
 using Hospital.Domain.Objects;
-using Hospital.Domain.Validations;
 using Hospital.Web.Models;
 using Hostpital.Service.IServices;
 using Microsoft.AspNetCore.Mvc;
@@ -33,19 +31,18 @@ namespace Hospital.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var patientViewModel = new PatientViewModel();
-            patientViewModel.ChartNumber = await _patientService.GetNewChartNumberAsync();
+            var filterPatientViewModel = new FilterPatientViewModel();
 
             var wards = (await _geographyService.GetWardsAsync());
-            patientViewModel.Wards = wards.Select(x => new SelectListItem { Value = x.Code, Text = x.Name }).ToList();
+            filterPatientViewModel.Wards = wards.Select(x => new SelectListItem { Value = x.Code, Text = x.Name }).ToList();
 
             var districts = (await _geographyService.GetDistrictsAsync());
-            patientViewModel.Districts = districts.Select(x => new SelectListItem { Value = x.Code, Text = x.Name }).ToList();
+            filterPatientViewModel.Districts = districts.Select(x => new SelectListItem { Value = x.Code, Text = x.Name }).ToList();
 
             var provinces = (await _geographyService.GetProvincesAsync());
-            patientViewModel.Provinces = provinces.Select(x => new SelectListItem { Value = x.Code, Text = x.Name }).ToList();
+            filterPatientViewModel.Provinces = provinces.Select(x => new SelectListItem { Value = x.Code, Text = x.Name }).ToList();
 
-            return View(patientViewModel);
+            return View(filterPatientViewModel);
         }
 
         [HttpGet]
@@ -67,6 +64,14 @@ namespace Hospital.Controllers
             return Json(data);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> OpenNewDialog()
+        {
+            var patientViewModel = new PatientViewModel();
+            patientViewModel.ChartNumber = await _patientService.GetNewChartNumberAsync();
+            return PartialView("_PatientModalPartial", patientViewModel);
+        }
+
         [HttpPost]
         public async Task<JsonResult> Create(PatientCreateDto patient)
         {
@@ -76,7 +81,6 @@ namespace Hospital.Controllers
                 return Json(results.Errors.Select(x => x.ErrorMessage).ToList());
 
             await _patientService.CreateAsync(patient);
-            ModelState.Clear();
 
             return Json("");
         }

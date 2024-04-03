@@ -1,0 +1,106 @@
+﻿@using Hospital.Web.Models;
+@model FilterPatientViewModel;
+
+<div class"row">
+    <div class="col-lg-12">
+        <form id="filter-form">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="chartNumber">Chart Number</label>
+                        <input asp-for="ChartNumber" type="text" class="form-control" placeholder="Chart Number">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input asp-for="FirstName" type="text" class="form-control" placeholder="First Name">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input asp-for="LastName" type="text" class="form-control" placeholder="Last Name">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select asp-for="Gender" class="form-control select2">
+                            <option value="">---All---</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Date of birth:</label>
+                        <div class="input-group date" id="filter-dob-date" data-target-input="nearest">
+                            <input asp-for="Dob" type="text" class="form-control datetimepicker-input" data-target="#filter-dob-date" placeholder="mm/dd/yyyy" />
+                            <div class="input-group-append" data-target="#filter-dob-date" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input asp-for="Phone" type="text" class="form-control" placeholder="Phone">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input asp-for="Email" type="text" class="form-control" placeholder="Email">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input asp-for="Address" type="text" class="form-control" placeholder="Address">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Ward</label>
+                        <select asp-for="WardCode" asp-items="Model.Wards" class="form-control select2">
+                            <option value="">---All---</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>District</label>
+                        <select asp-for="DistrictCode" asp-items="Model.Districts" class="form-control select2">
+                            <option value="">---All---</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Province</label>
+                        <select asp-for="ProvinceCode" asp-items="Model.Provinces" class="form-control select2">
+                            <option value="">---All---</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="zipCode">Zip Code</label>
+                        <input asp-for="ZipCode" type="text" class="form-control" placeholder="ZipCode">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

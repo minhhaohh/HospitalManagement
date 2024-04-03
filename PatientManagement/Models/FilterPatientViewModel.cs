@@ -1,4 +1,4 @@
-﻿using Hospital.Domain.Objects;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Hospital.Web.Models
 {
@@ -27,5 +27,11 @@ namespace Hospital.Web.Models
         public string ProvinceCode { get; set; }
 
         public string ZipCode { get; set; }
+
+        public List<SelectListItem> Wards { get; set; }
+
+        public List<SelectListItem> Districts { get; set; }
+
+        public List<SelectListItem> Provinces { get; set; }
     }
 }

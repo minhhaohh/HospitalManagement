@@ -28,8 +28,6 @@ namespace Hospital.Web.Models
 
         public string ZipCode { get; set; }
 
-        public FilterPatientViewModel Filter { get; set; }
-
         public List<SelectListItem> Wards { get; set; }
 
         public List<SelectListItem> Districts { get; set; }
