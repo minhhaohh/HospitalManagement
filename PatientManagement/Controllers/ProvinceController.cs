@@ -20,7 +20,8 @@ namespace Hospital.Controllers
             return View();
         }
 
-        public async Task<JsonResult> GetData(int page, int rows)
+        [HttpGet]
+        public async Task<JsonResult> GetDataJqGrid(int page, int rows)
         {
             var data = await _geographyService.GetProvincesForJqGridAsync(page, rows);
 

@@ -55,7 +55,7 @@ namespace Hospital.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetData(int page, int rows)
+        public async Task<JsonResult> GetDataJqGrid(int page, int rows)
         {
             var data = await _patientService.GetPatientsForJqGridAsync(page, rows);
 
