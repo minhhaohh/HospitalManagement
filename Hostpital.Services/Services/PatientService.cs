@@ -90,7 +90,7 @@ namespace Hostpital.Service.Services
             return ChartNumber.Prefix + (maxNumber + 1).ToString($"D{ChartNumber.Lenght - ChartNumber.Prefix.Length}");
         }
 
-        public async Task CreateAsync(PatientCreateDto patient)
+        public async Task<bool> CreateAsync(PatientCreateDto patient)
         {
             try
             {
@@ -100,7 +100,9 @@ namespace Hostpital.Service.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
+                return false;
             }
+            return true;
         }
 
         public async Task<bool> UpdateAsync(string chartNumber, PatientUpdateDto patient)
@@ -125,7 +127,7 @@ namespace Hostpital.Service.Services
             return true;
         }
 
-        public async Task DeleteAsync()
+        public async Task<bool> DeleteAsync()
         {
             throw new NotImplementedException();
         }

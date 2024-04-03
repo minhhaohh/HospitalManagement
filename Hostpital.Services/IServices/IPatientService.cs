@@ -13,10 +13,10 @@ namespace Hostpital.Service.IServices
 
         Task<string> GetNewChartNumberAsync();
 
-        Task CreateAsync(PatientCreateDto patient);
+        Task<bool> CreateAsync(PatientCreateDto patient);
 
         Task<bool> UpdateAsync(string chartNumber, PatientUpdateDto patient);
 
-        Task DeleteAsync();
+        Task<bool> DeleteAsync();
     }
 }
