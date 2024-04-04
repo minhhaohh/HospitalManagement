@@ -72,7 +72,7 @@ namespace Hostpital.Service.Services
         {
             try
             {
-                var data = _context.Set<District>().AsQueryable();
+                var data = _context.Set<District>().Include(d => d.Province).AsQueryable();
 
                 int totalRecords = data.Count();
                 var totalPages = (int)Math.Ceiling((float)totalRecords / (float)paging.PageSize);
@@ -99,7 +99,7 @@ namespace Hostpital.Service.Services
         {
             try
             {
-                var data = _context.Set<Ward>().AsQueryable();
+                var data = _context.Set<Ward>().Include(x => x.District).AsQueryable();
 
                 int totalRecords = data.Count();
                 var totalPages = (int)Math.Ceiling((float)totalRecords / (float)paging.PageSize);

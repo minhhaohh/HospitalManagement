@@ -3,10 +3,10 @@ using FluentValidation;
 using Hospital.Domain.DTO;
 using Hospital.Domain.Extensions;
 using Hospital.Domain.Objects;
+using Hospital.Web.Extensions;
 using Hospital.Web.Models;
 using Hostpital.Service.IServices;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Hospital.Controllers
 {
@@ -46,18 +46,18 @@ namespace Hospital.Controllers
             var patientFilterViewModel = new PatientFilterViewModel();
 
             var wards = (await _geographyService.GetWardsAsync());
-            patientFilterViewModel.SelectWards = wards.Select(x => new SelectListItem { Value = x.Code, Text = x.Name }).ToList();
+            patientFilterViewModel.SelectWards = wards.ToSelectListItems(item => item.Code, item => item.Name);
 
             var districts = (await _geographyService.GetDistrictsAsync());
-            patientFilterViewModel.SelectDistricts = districts.Select(x => new SelectListItem { Value = x.Code, Text = x.Name }).ToList();
+            patientFilterViewModel.SelectDistricts = districts.ToSelectListItems(item => item.Code, item => item.Name);
 
             var provinces = (await _geographyService.GetProvincesAsync());
-            patientFilterViewModel.SelectProvinces = provinces.Select(x => new SelectListItem { Value = x.Code, Text = x.Name }).ToList();
+            patientFilterViewModel.SelectProvinces = provinces.ToSelectListItems(item => item.Code, item => item.Name);
 
             return View(patientFilterViewModel);
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<JsonResult> GetDataGrid(string sidx, string sord, int page, int rows, PatientQuery filter)
         {
             var paging = new PagingParams() { PageIndex = (page == 0 ? 0 : page - 1), PageSize = (rows == 0 ? 10 : rows) };
@@ -82,13 +82,13 @@ namespace Hospital.Controllers
             }
 
             var wards = (await _geographyService.GetWardsAsync());
-            patientViewModel.SelectWards = wards.Select(x => new SelectListItem { Value = x.Code, Text = x.Name }).ToList();
+            patientViewModel.SelectWards = wards.ToSelectListItems(item => item.Code, item => item.Name);
 
             var districts = (await _geographyService.GetDistrictsAsync());
-            patientViewModel.SelectDistricts = districts.Select(x => new SelectListItem { Value = x.Code, Text = x.Name }).ToList();
+            patientViewModel.SelectDistricts = districts.ToSelectListItems(item => item.Code, item => item.Name);
 
             var provinces = (await _geographyService.GetProvincesAsync());
-            patientViewModel.SelectProvinces = provinces.Select(x => new SelectListItem { Value = x.Code, Text = x.Name }).ToList();
+            patientViewModel.SelectProvinces = provinces.ToSelectListItems(item => item.Code, item => item.Name);
 
             return PartialView("_PatientModalPartial", patientViewModel);
         }

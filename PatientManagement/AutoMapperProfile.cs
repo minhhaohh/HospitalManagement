@@ -20,7 +20,8 @@ namespace Hospital.Web
             CreateMap<PatientUpdateDto, Patient>()
                 .ForMember(x => x.Id, opt => opt.Ignore())
                 .ForMember(x => x.ChartNumber, opt => opt.Ignore());
-            CreateMap<PatientDto, PatientViewModel>();
+            CreateMap<PatientDto, PatientViewModel>()
+                .ForMember(x => x.IsEdit, opt => opt.Ignore());
         }
     }
 }

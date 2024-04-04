@@ -40,7 +40,7 @@
                 ({
                     url: "/Patient/GetDataGrid",
                     datatype: 'json',
-                    mtype: 'Get',
+                    mtype: 'Post',
                     postData: {
                         filter: {
                             ChartNumber: function () { return paramFilterObj.ChartNumber },
@@ -83,6 +83,7 @@
                     viewrecords: true,
                     beforeRequest: function () {
                         GetDataFilter();
+                        console.log(paramFilterObj)
                     }
                 })
         })
