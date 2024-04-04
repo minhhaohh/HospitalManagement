@@ -20,7 +20,8 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddScoped<IGeographyService, GeographyService>();
 builder.Services.AddScoped<IPatientService, PatientService>();
 
-builder.Services.AddScoped<IValidator<PatientCreateDto>, PatientValidator>();
+builder.Services.AddScoped<IValidator<PatientCreateDto>, PatientCreateValidator>();
+builder.Services.AddScoped<IValidator<PatientUpdateDto>, PatientUpdateValidator>();
 
 var app = builder.Build();
 

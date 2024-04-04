@@ -1,6 +1,6 @@
 ﻿namespace Hospital.Domain.Objects
 {
-    public class PagedList<T> : List<T>, IPagedList<T>
+    public class PagedList<T> : IPagedList<T>
     {
         /// <summary>
         /// Current page
@@ -35,14 +35,14 @@
         /// <summary>
         /// Data
         /// </summary>
-        public List<T> Rows => this;
+        public List<T> Rows { get; } = new List<T>();
 
         public PagedList(List<T> source, int pageIndex, int pageSize, int totalCount)
         {
             Page = pageIndex;
             Records = pageSize;
             TotalCount = totalCount;
-            AddRange(source);
+            Rows.AddRange(source);
         }
     }
 }

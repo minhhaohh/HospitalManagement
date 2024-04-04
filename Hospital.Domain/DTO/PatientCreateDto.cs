@@ -12,7 +12,7 @@ namespace Hospital.Domain.DTO
 
         public string Gender { get; set; }
 
-        public DateTime Dob { get; set; }
+        public DateTime? Dob { get; set; }
 
         public string Phone { get; set; }
 

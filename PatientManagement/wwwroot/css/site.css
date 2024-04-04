@@ -20,3 +20,8 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.ui-jqgrid {
+    font-size: 1em !important;
+    margin-top: 6px;
+}

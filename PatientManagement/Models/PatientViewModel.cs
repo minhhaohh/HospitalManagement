@@ -4,6 +4,8 @@ namespace Hospital.Web.Models
 {
     public class PatientViewModel
     {
+        public bool IsEdit { get; set; }
+
         public string ChartNumber { get; set; }
 
         public string FirstName { get; set; }
@@ -12,7 +14,7 @@ namespace Hospital.Web.Models
 
         public string Gender { get; set; }
 
-        public DateTime Dob { get; set; } = DateTime.Now;
+        public DateTime? Dob { get; set; }
 
         public string Phone { get; set; }
 
@@ -28,11 +30,11 @@ namespace Hospital.Web.Models
 
         public string ZipCode { get; set; }
 
-        public List<SelectListItem> Wards { get; set; }
+        public List<SelectListItem> SelectListWards { get; set; }
 
-        public List<SelectListItem> Districts { get; set; }
+        public List<SelectListItem> SelectListDistricts { get; set; }
 
-        public List<SelectListItem> Provinces { get; set; }
+        public List<SelectListItem> SelectListProvinces { get; set; }
 
         public PatientViewModel()
         {

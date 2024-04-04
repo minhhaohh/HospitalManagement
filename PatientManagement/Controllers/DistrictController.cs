@@ -23,7 +23,7 @@ namespace Hospital.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> InitializeGrid(int page, int rows)
+        public async Task<JsonResult> GetDataGrid(int page, int rows)
         {
             var paging = new PagingParams() { PageIndex = page - 1, PageSize = rows };
 

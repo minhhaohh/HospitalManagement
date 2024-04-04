@@ -3,9 +3,9 @@ using Hospital.Domain.DTO;
 
 namespace Hospital.Domain.Validations
 {
-    public class PatientValidator : AbstractValidator<PatientCreateDto>
+    public class PatientUpdateValidator : AbstractValidator<PatientUpdateDto>
     {
-        public PatientValidator()
+        public PatientUpdateValidator()
         {
             RuleFor(x => x.ChartNumber).NotNull();
             RuleFor(x => x.FirstName).NotNull();

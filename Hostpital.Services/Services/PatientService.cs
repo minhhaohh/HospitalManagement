@@ -115,7 +115,11 @@ namespace Hostpital.Service.Services
                 if (existed == null)
                     return false;
 
-                existed = _mapper.Map<Patient>(patient);
+                // Map the properties from patient to existed
+                _mapper.Map(patient, existed);
+
+                // Mark the entity as modified
+                _context.Entry(existed).State = EntityState.Modified;
 
                 await _context.SaveChangesAsync();
             }
@@ -127,9 +131,20 @@ namespace Hostpital.Service.Services
             return true;
         }
 
-        public async Task<bool> DeleteAsync()
+        public async Task<bool> DeleteAsync(string chartNumber)
         {
-            throw new NotImplementedException();
+            var existed = await _context.Set<Patient>()
+                .FirstOrDefaultAsync(x => x.ChartNumber == chartNumber);
+
+            if (existed == null)
+                return false;
+
+            // Remove the patient entity from the context
+            _context.Set<Patient>().Remove(existed);
+
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

@@ -2,6 +2,7 @@
     ViewData["Title"] = "Districts";
 }
 
+<h2>Districts</h2>
 <div>
     <table id="grid"></table>
     <div id="pager"></div>
@@ -12,7 +13,7 @@
         $(function () {
             $("#grid").jqGrid
                 ({
-                    url: "/District/InitializeGrid",
+                    url: "/District/GetDataGrid",
                     datatype: 'json',
                     mtype: 'Get',
                     colModel: [
@@ -22,7 +23,6 @@
                         { label: "Province Code", name: "province.code" },
                         { label: "Province Name", name: "province.name" }
                     ],
-                    caption: 'Districts',
                     pager: jQuery('#pager'),
                     height: '100%',
                     autowidth: true,

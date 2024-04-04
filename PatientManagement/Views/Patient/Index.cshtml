@@ -2,10 +2,10 @@
 @{
     ViewData["Title"] = "Patients";
 }
-@model FilterPatientViewModel;
+@model PatientFilterViewModel;
 
 <h2>Patients</h2>
-<partial name="_FilterPartientPartial.cshtml" for="@Model" />
+<partial name="_PartientFilterPartial.cshtml" for="@Model" />
 <div class="row">
     <div class="col-lg-12 text-right">
         <button type="button" class="btn btn-success ml-2" onClick="FilterData()">
@@ -14,7 +14,7 @@
         <button type="button" class="btn btn-warning ml-2" onClick="ClearFilter()">
             Clear
         </button>
-        <button type="button" class="btn btn-primary ml-2" onclick="OpenCreateNew()">
+        <button type="button" class="btn btn-primary ml-2" onclick="OpenCreateModal()">
             Create New
         </button>
     </div>
@@ -24,11 +24,11 @@
     <div id="pager"></div>
 </div>
 <!-- Modal -->
-@* <partial name="_PatientModalPartial.cshtml"> *@
 <div class="modal fade" id="patientModal" tabindex="-1" aria-hidden="true">
 </div>
 @section scripts {
     <script>
+        var paramFilterObj = {};
         $(function () {
             //Date picker
             $('#filter-dob-date').datetimepicker({
@@ -36,9 +36,24 @@
             });
             $("#grid").jqGrid
                 ({
-                    url: "/Patient/InitializeGrid",
+                    url: "/Patient/GetDataGrid",
                     datatype: 'json',
                     mtype: 'Get',
+                    postData: {
+                        filter: {
+                            ChartNumber: function () { return paramFilterObj.ChartNumber },
+                            FirstName: function () { return paramFilterObj.FirstName },
+                            LastName: function () { return paramFilterObj.LastName },
+                            Gender: function () { return paramFilterObj.Gender },
+                            Dob: function () { return paramFilterObj.Dob },
+                            Phone: function () { return paramFilterObj.Phone },
+                            Email: function () { return paramFilterObj.Email },
+                            Address: function () { return paramFilterObj.Address },
+                            WardCode: function () { return paramFilterObj.WardCode },
+                            DistrictCode: function () { return paramFilterObj.DistrictCode },
+                            ProvinceCode: function () { return paramFilterObj.ProvinceCode },
+                        }
+                    },
                     colModel: [
                         { label: "Chart Number", name: "chartNumber" },
                         { label: "First Name", name: "firstName" },
@@ -47,49 +62,52 @@
                         { label: "Date of birth", name: "dob", formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
                         { label: "Phone", name: "phone" },
                         { label: "Email", name: "email" },
-                        { label: "Address", name: "address" }
+                        { label: "Address", name: "address" },
+                        {
+                            label: "Actions", formatter: function (cellvalue, options, rowobject) {
+                                return ' <div class="text-center">'
+                                    + '<button type="button" class="btn btn-info ml-2" onClick=OpenEditModal("' + rowobject.chartNumber + '")>Edit</button>'
+                                    + '<button type="button" class="btn btn-danger ml-2" onClick=DeleteRow("' + rowobject.chartNumber + '")>Delete</button>'
+                                    + '</div>';
+                            }
+                        }
                     ],
-                    caption: 'Patients',
                     pager: jQuery('#pager'),
                     height: '100%',
                     autowidth: true,
                     rowNum: 10,
                     rowList: [10, 20, 30, 50],
-                    viewrecords: true
+                    viewrecords: true,
+                    beforeRequest: function () {
+                        GetDataFilter();
+                    }
                 })
         })
 
-        function FilterData() {
-            var filterFormData = $("#filter-form").serialize();
-            $.ajax({
-                url: '/Patient/GetDataFilter',
-                dataType: 'json',
-                data: filterFormData,
-                success: function (response) {
-                    // Handle successful response, populate jqGrid with data
-                    jQuery("#grid")
-                        .jqGrid('setGridParam',
-                            {
-                                datatype: 'local',
-                                data: response.rows
-                            })
-                        .trigger("reloadGrid");
-                },
-                error: function (response) {
-                    // Handle error
-                    toastr.error(response.responseText);
-                }
+        function GetDataFilter() {
+            $.each($('#filter-form').serializeArray(), function (_, kv) {
+                paramFilterObj[kv.name] = kv.value;
             });
         }
 
-        function ClearFilter() {
-
+        function ReloadGrid() {
+            jQuery("#grid")
+                .trigger("reloadGrid");
         }
 
-        function OpenCreateNew() {
+        function FilterData() {
+            ReloadGrid();
+        }
+
+        function ClearFilter() {
+            $('#filter-form')[0].reset();
+            ReloadGrid();
+        }
+
+        function OpenCreateModal() {
             $.ajax({
                 type: "GET",
-                url: "/Patient/OpenNewDialog",
+                url: "/Patient/OpenModalDialog",
                 contentType: "application/json; charset=utf-8",
                 dataType: "html",
                 success: function (response) {
@@ -106,31 +124,110 @@
             });
         }
 
-        function SaveChanges() {
-            var formData = $("#form-info").serialize();
+        function OpenEditModal(chartNumber) {
             $.ajax({
-                url: '/Patient/Create',
-                type: 'POST',
-                data: formData,
+                type: "GET",
+                url: "/Patient/OpenModalDialog",
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    IsEdit: true,
+                    chartNumber: chartNumber
+                },
+                dataType: "html",
                 success: function (response) {
-                    if (response == null || response == undefined) {
-                        toastr.error("Error system!!!");
-                    }
-                    else if (response.length > 0) {
-                        for (let message of response) {
-                            toastr.error(message);
-                        }
-                    }
-                    else {
-                        toastr.success("Created successfully.");
-                        $("#patientModal").modal('hide');
-                        $('#grid').trigger('reloadGrid');
-                    }
+                    $("#patientModal").html(response);
+                    //Date picker
+                    $('#info-dob-date').datetimepicker({
+                        format: 'L'
+                    });
+                    $("#patientModal").modal('show');
                 },
                 error: function (response) {
                     toastr.error(response.responseText);
                 }
             });
+        }
+
+        function DeleteRow(chartNumber) {
+            var result = confirm("Do you want to delete patient "  + chartNumber + " ?");
+            if (result) {
+                $.ajax({
+                    url: '/Patient/Delete?chartNumber=' + chartNumber,
+                    type: 'DELETE',
+                    success: function (response) {
+                        if (response == null || response == undefined) {
+                            toastr.error("Response not found!!!");
+                        }
+                        else if (response.length > 0) {
+                            for (let message of response) {
+                                toastr.error(message);
+                            }
+                        }
+                        else {
+                            toastr.success("Deleted successfully.");
+                            $("#patientModal").modal('hide');
+                            $('#grid').trigger('reloadGrid');
+                        }
+                    },
+                    error: function (response) {
+                        toastr.error(response.responseText);
+                    }
+                });
+            }
+        }
+
+        function Save(isEdit, chartNumber) {
+            var formData = $("#form-info").serialize();
+            if (isEdit) {
+                $.ajax({
+                    url: '/Patient/Update?chartNumber=' + chartNumber,
+                    type: 'PUT',
+                    data: formData,
+                    success: function (response) {
+                        if (response == null || response == undefined) {
+                            toastr.error("Response not found!!!");
+                        }
+                        else if (response.length > 0) {
+                            for (let message of response) {
+                                toastr.error(message);
+                            }
+                        }
+                        else {
+                            toastr.success("Updated successfully.");
+                            $("#patientModal").modal('hide');
+                            $('#grid').trigger('reloadGrid');
+                        }
+                    },
+                    error: function (response) {
+                        toastr.error(response.responseText);
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    url: '/Patient/Create',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        if (response == null || response == undefined) {
+                            toastr.error("Response not found!!!");
+                        }
+                        else if (response.length > 0) {
+                            for (let message of response) {
+                                toastr.error(message);
+                            }
+                        }
+                        else {
+                            toastr.success("Created successfully.");
+                            $("#patientModal").modal('hide');
+                            $('#grid').trigger('reloadGrid');
+                        }
+                    },
+                    error: function (response) {
+                        toastr.error(response.responseText);
+                    }
+                });
+            }
         }
     </script>
 }

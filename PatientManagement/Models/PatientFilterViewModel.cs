@@ -2,7 +2,7 @@
 
 namespace Hospital.Web.Models
 {
-    public class FilterPatientViewModel
+    public class PatientFilterViewModel
     {
         public string ChartNumber { get; set; }
 
@@ -28,10 +28,10 @@ namespace Hospital.Web.Models
 
         public string ZipCode { get; set; }
 
-        public List<SelectListItem> Wards { get; set; }
+        public List<SelectListItem> SelectListWards { get; set; }
 
-        public List<SelectListItem> Districts { get; set; }
+        public List<SelectListItem> SelectListDistricts { get; set; }
 
-        public List<SelectListItem> Provinces { get; set; }
+        public List<SelectListItem> SelectListProvinces { get; set; }
     }
 }

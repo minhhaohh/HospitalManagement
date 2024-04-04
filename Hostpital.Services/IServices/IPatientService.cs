@@ -17,6 +17,6 @@ namespace Hostpital.Service.IServices
 
         Task<bool> UpdateAsync(string chartNumber, PatientUpdateDto patient);
 
-        Task<bool> DeleteAsync();
+        Task<bool> DeleteAsync(string chartNumber);
     }
 }
