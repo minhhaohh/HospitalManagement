@@ -1,10 +1,10 @@
 ﻿using Hospital.Domain.Objects;
 using Hostpital.Service.IServices;
-using Hostpital.Service.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hospital.Controllers
 {
+    [Route("[controller]/[action]")]
     public class DistrictController : Controller
     {
         private readonly ILogger<DistrictController> _logger;
@@ -17,6 +17,7 @@ namespace Hospital.Controllers
             _geographyService = geographyService;
         }
 
+        [Route("/District")]
         public IActionResult Index()
         {
             return View();

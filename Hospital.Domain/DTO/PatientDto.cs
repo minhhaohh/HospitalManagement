@@ -4,6 +4,8 @@ namespace Hospital.Domain.DTO
 {
     public class PatientDto
     {
+        public int Id { get; set; }
+
         public string ChartNumber { get; set; }
 
         public string FirstName { get; set; }

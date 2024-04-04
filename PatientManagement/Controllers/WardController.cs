@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hospital.Controllers
 {
+    [Route("[controller]/[action]")]
     public class WardController : Controller
     {
         private readonly ILogger<WardController> _logger;
@@ -16,6 +17,7 @@ namespace Hospital.Controllers
             _geographyService = geographyService;
         }
 
+        [Route("/Ward")]
         public IActionResult Index()
         {
             return View();

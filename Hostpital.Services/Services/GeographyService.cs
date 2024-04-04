@@ -13,17 +13,17 @@ namespace Hostpital.Service.Services
     {
         private readonly ILogger<GeographyService> _logger;
 
-        private readonly HospitalContext _context;
-
         private readonly IMapper _mapper;
 
+        private readonly HospitalContext _context;
+
         public GeographyService(ILogger<GeographyService> logger, 
-            HospitalContext context,
-            IMapper mapper)
+            IMapper mapper,
+            HospitalContext context)
         {
             _logger = logger;
-            _context = context;
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<List<ProvinceDto>> GetProvincesAsync()

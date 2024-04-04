@@ -26,6 +26,8 @@
 <!-- Modal -->
 <div class="modal fade" id="patientModal" tabindex="-1" aria-hidden="true">
 </div>
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+</div>
 @section scripts {
     <script>
         var paramFilterObj = {};
@@ -55,6 +57,7 @@
                         }
                     },
                     colModel: [
+                        { label: "Id", name: "id", hidden: true },
                         { label: "Chart Number", name: "chartNumber" },
                         { label: "First Name", name: "firstName" },
                         { label: "Last Name", name: "lastName" },
@@ -65,9 +68,9 @@
                         { label: "Address", name: "address" },
                         {
                             label: "Actions", formatter: function (cellvalue, options, rowobject) {
-                                return ' <div class="text-center">'
-                                    + '<button type="button" class="btn btn-info ml-2" onClick=OpenEditModal("' + rowobject.chartNumber + '")>Edit</button>'
-                                    + '<button type="button" class="btn btn-danger ml-2" onClick=DeleteRow("' + rowobject.chartNumber + '")>Delete</button>'
+                                return '<div class="text-center">'
+                                    + '<button type="button" class="btn btn-info ml-2" onClick=OpenEditModal(' + rowobject.id + ')>Edit</button>'
+                                    + '<button type="button" class="btn btn-danger ml-2" onClick=OpenDeleteConfirmModalDialog(' + rowobject.id + ',"' + rowobject.chartNumber + '")>Delete</button>'
                                     + '</div>';
                             }
                         }
@@ -119,19 +122,19 @@
                     $("#patientModal").modal('show');
                 },
                 error: function (response) {
-                    toastr.error(response.responseText);
+                    toastr.error("Internal Server Error!!!");
                 }
             });
         }
 
-        function OpenEditModal(chartNumber) {
+        function OpenEditModal(id) {
             $.ajax({
                 type: "GET",
                 url: "/Patient/OpenModalDialog",
                 contentType: "application/json; charset=utf-8",
                 data: {
                     IsEdit: true,
-                    chartNumber: chartNumber
+                    Id: id
                 },
                 dataType: "html",
                 success: function (response) {
@@ -148,39 +151,56 @@
             });
         }
 
-        function DeleteRow(chartNumber) {
-            var result = confirm("Do you want to delete patient "  + chartNumber + " ?");
-            if (result) {
-                $.ajax({
-                    url: '/Patient/Delete?chartNumber=' + chartNumber,
-                    type: 'DELETE',
-                    success: function (response) {
-                        if (response == null || response == undefined) {
-                            toastr.error("Response not found!!!");
-                        }
-                        else if (response.length > 0) {
-                            for (let message of response) {
-                                toastr.error(message);
-                            }
-                        }
-                        else {
-                            toastr.success("Deleted successfully.");
-                            $("#patientModal").modal('hide');
-                            $('#grid').trigger('reloadGrid');
-                        }
-                    },
-                    error: function (response) {
-                        toastr.error(response.responseText);
-                    }
-                });
-            }
+        function OpenDeleteConfirmModalDialog(id, chartNumber) {
+            $.ajax({
+                type: "GET",
+                url: "/Patient/OpenDeleteConfirmModalDialog",
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    Id: id,
+                    ChartNumber: chartNumber,
+                },
+                dataType: "html",
+                success: function (response) {
+                    $("#patientModal").html(response);
+                    $("#patientModal").modal('show');
+                },
+                error: function (response) {
+                    toastr.error("Internal Server Error!!!");
+                }
+            });
         }
 
-        function Save(isEdit, chartNumber) {
+        function Delete(id) {
+            $.ajax({
+                url: '/Patient/Delete?Id=' + id,
+                type: 'DELETE',
+                success: function (response) {
+                    if (response == null || response == undefined) {
+                        toastr.error("Response not found!!!");
+                    }
+                    else if (response.length > 0) {
+                        for (let message of response) {
+                            toastr.error(message);
+                        }
+                    }
+                    else {
+                        toastr.success("Deleted successfully.");
+                        $("#patientModal").modal('hide');
+                        $('#grid').trigger('reloadGrid');
+                    }
+                },
+                error: function (response) {
+                    toastr.error("Internal Server Error!!!");
+                }
+            });
+        }
+
+        function Save(isEdit, id) {
             var formData = $("#form-info").serialize();
             if (isEdit) {
                 $.ajax({
-                    url: '/Patient/Update?chartNumber=' + chartNumber,
+                    url: '/Patient/Update?Id=' + id,
                     type: 'PUT',
                     data: formData,
                     success: function (response) {
@@ -199,7 +219,7 @@
                         }
                     },
                     error: function (response) {
-                        toastr.error(response.responseText);
+                        toastr.error("Internal Server Error!!!");
                     }
                 });
             }
@@ -224,7 +244,7 @@
                         }
                     },
                     error: function (response) {
-                        toastr.error(response.responseText);
+                        toastr.error("Internal Server Error!!!");
                     }
                 });
             }

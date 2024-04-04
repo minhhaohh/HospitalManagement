@@ -9,14 +9,12 @@ namespace Hostpital.Service.IServices
 
         Task<IPagedList<PatientDto>> SearchPatientsAsync(PatientQuery condition, PagingParams paging);
 
-        Task<PatientDto> GetPatientByChartNumberAsync(string chartNumber);
+        Task<PatientDto> GetPatientByIdAsync(int id);
 
-        Task<string> GetNewChartNumberAsync();
+        Task<string> CreateAsync(PatientCreateDto patient);
 
-        Task<bool> CreateAsync(PatientCreateDto patient);
+        Task<string> UpdateAsync(int id, PatientUpdateDto patient);
 
-        Task<bool> UpdateAsync(string chartNumber, PatientUpdateDto patient);
-
-        Task<bool> DeleteAsync(string chartNumber);
+        Task<string> DeleteAsync(int id);
     }
 }

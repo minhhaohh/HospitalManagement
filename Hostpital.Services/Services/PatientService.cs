@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Azure;
-using Hospital.Domain.Consts;
 using Hospital.Domain.DTO;
 using Hospital.Domain.Extensions;
 using Hospital.Domain.Models;
@@ -9,7 +7,6 @@ using Hospital.Entityframework.Contexts;
 using Hostpital.Service.IServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Hostpital.Service.Services
 {
@@ -17,17 +14,17 @@ namespace Hostpital.Service.Services
     {
         private readonly ILogger<PatientService> _logger;
 
-        private readonly HospitalContext _context;
-
         private readonly IMapper _mapper;
 
+        private readonly HospitalContext _context;
+
         public PatientService(ILogger<PatientService> logger, 
-            HospitalContext context,
-            IMapper mapper)
+            IMapper mapper,
+            HospitalContext context)
         {
             _logger = logger;
-            _context = context;
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<List<PatientDto>> GetAllPatientsAsync()
@@ -74,23 +71,14 @@ namespace Hostpital.Service.Services
             return null;
         }
 
-        public async Task<PatientDto> GetPatientByChartNumberAsync(string chartNumber)
+        public async Task<PatientDto> GetPatientByIdAsync(int id)
         {
             var result = await _context.Set<Patient>()
-                .FirstOrDefaultAsync(x => x.ChartNumber == chartNumber);
+                .FirstOrDefaultAsync(x => x.Id == id);
             return _mapper.Map<PatientDto>(result);
         }
 
-        public async Task<string> GetNewChartNumberAsync()
-        {
-            var lastPatient = _context.Set<Patient>()
-                .OrderByDescending(x => x.ChartNumber)
-                .FirstOrDefault();
-            var maxNumber = lastPatient == null ? 0 : int.Parse(lastPatient.ChartNumber.Replace(ChartNumber.Prefix, ""));
-            return ChartNumber.Prefix + (maxNumber + 1).ToString($"D{ChartNumber.Lenght - ChartNumber.Prefix.Length}");
-        }
-
-        public async Task<bool> CreateAsync(PatientCreateDto patient)
+        public async Task<string> CreateAsync(PatientCreateDto patient)
         {
             try
             {
@@ -100,20 +88,20 @@ namespace Hostpital.Service.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return false;
+                return ex.Message;
             }
-            return true;
+            return string.Empty;
         }
 
-        public async Task<bool> UpdateAsync(string chartNumber, PatientUpdateDto patient)
+        public async Task<string> UpdateAsync(int id, PatientUpdateDto patient)
         {
             try
             {
                 var existed = await _context.Set<Patient>()
-                .FirstOrDefaultAsync(x => x.ChartNumber == chartNumber);
+                .FirstOrDefaultAsync(x => x.Id == id);
 
                 if (existed == null)
-                    return false;
+                    return $"Not found Patient with Id {id}!!!";
 
                 // Map the properties from patient to existed
                 _mapper.Map(patient, existed);
@@ -126,25 +114,33 @@ namespace Hostpital.Service.Services
             catch (Exception ex)
             {
                 _logger.LogError($"{ex.Message}");
-                return false;
+                return ex.Message;
             }
-            return true;
+            return string.Empty;
         }
 
-        public async Task<bool> DeleteAsync(string chartNumber)
+        public async Task<string> DeleteAsync(int id)
         {
-            var existed = await _context.Set<Patient>()
-                .FirstOrDefaultAsync(x => x.ChartNumber == chartNumber);
+            try
+            {
+                var existed = await _context.Set<Patient>()
+                .FirstOrDefaultAsync(x => x.Id == id);
 
-            if (existed == null)
-                return false;
+                if (existed == null)
+                    return $"Not found Patient with Id {id}!!!";
 
-            // Remove the patient entity from the context
-            _context.Set<Patient>().Remove(existed);
+                // Remove the patient entity from the context
+                _context.Set<Patient>().Remove(existed);
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message}");
+                return ex.Message;
+            }
 
-            return true;
+            return string.Empty;
         }
     }
 }

@@ -1,8 +1,8 @@
 using FluentValidation;
-using Hospital.Domain;
 using Hospital.Domain.DTO;
 using Hospital.Domain.Validations;
 using Hospital.Entityframework.Contexts;
+using Hospital.Web;
 using Hostpital.Service.IServices;
 using Hostpital.Service.Services;
 using Microsoft.EntityFrameworkCore;
@@ -38,26 +38,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
+app.UseAuthorization(); 
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.MapControllerRoute(
-    name: "province",
-    pattern: "{controller=Province}/{action=Index}/{code?}");
-
-app.MapControllerRoute(
-    name: "district",
-    pattern: "{controller=District}/{action=Index}/{code?}");
-
-app.MapControllerRoute(
-    name: "ward",
-    pattern: "{controller=Ward}/{action=Index}/{code?}");
-
-app.MapControllerRoute(
-    name: "patient",
-    pattern: "{controller=Patient}/{action=Index}/{code?}");
+app.MapControllers();
 
 app.Run();

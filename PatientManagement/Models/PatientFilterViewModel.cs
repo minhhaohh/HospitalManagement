@@ -28,10 +28,10 @@ namespace Hospital.Web.Models
 
         public string ZipCode { get; set; }
 
-        public List<SelectListItem> SelectListWards { get; set; }
+        public List<SelectListItem> SelectWards { get; set; }
 
-        public List<SelectListItem> SelectListDistricts { get; set; }
+        public List<SelectListItem> SelectDistricts { get; set; }
 
-        public List<SelectListItem> SelectListProvinces { get; set; }
+        public List<SelectListItem> SelectProvinces { get; set; }
     }
 }

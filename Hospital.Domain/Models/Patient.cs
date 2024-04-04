@@ -2,6 +2,8 @@
 {
     public class Patient
     {
+        public int Id { get; set; }
+
         public string ChartNumber { get; set; }
 
         public string FirstName { get; set; }

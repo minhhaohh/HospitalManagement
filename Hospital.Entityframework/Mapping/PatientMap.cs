@@ -1,5 +1,6 @@
 ﻿using Hospital.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Hospital.Entityframework.Mapping
@@ -10,10 +11,10 @@ namespace Hospital.Entityframework.Mapping
         {
             builder.ToTable("Patients");
 
-            builder.HasKey(x => x.ChartNumber);
+            builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.ChartNumber)
-                .HasMaxLength(50)
+            builder.Property(p => p.ChartNumber)
+                .ValueGeneratedOnAddOrUpdate()
                 .IsRequired();
 
             builder.Property(x => x.FirstName)

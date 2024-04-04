@@ -4,6 +4,7 @@ using System.Diagnostics;
 
 namespace Hospital.Web.Controllers
 {
+    [Route("[controller]/[action]")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -13,6 +14,9 @@ namespace Hospital.Web.Controllers
             _logger = logger;
         }
 
+        [Route("~/")]
+        [Route("/Home")]
+        [Route("~/Home/Index")]
         public IActionResult Index()
         {
             return View();
