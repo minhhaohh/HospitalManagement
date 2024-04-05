@@ -8,14 +8,21 @@
 <partial name="_PartientFilterPartial.cshtml" for="@Model" />
 <div class="row">
     <div class="col-lg-12 text-right">
-        <button type="button" class="btn btn-success ml-2" onClick="FilterData()">
+        <button type="button" class="btn btn-primary ml-2" onClick="FilterData()">
+            <i class="fas fa-filter"></i>
             Filter
         </button>
         <button type="button" class="btn btn-warning ml-2" onClick="ClearFilter()">
+            <i class="fas fa-eraser"></i>
             Clear
         </button>
         <button type="button" class="btn btn-primary ml-2" onclick="OpenCreateModal()">
+            <i class="fas fa-plus"></i>
             Create New
+        </button>
+        <button type="button" class="btn btn-success ml-2" onClick="ExportExcel()">
+            <i class="fas fa-file-excel"></i>
+            Export
         </button>
     </div>
 </div>
@@ -31,8 +38,9 @@
 @section scripts {
     <script>
         var paramFilterObj = {};
+
         $(function () {
-            //Date picker
+            // Date picker
             $('#filter-dob-date').datetimepicker({
                 format: 'L'
             });
@@ -59,13 +67,41 @@
                     colModel: [
                         { label: "Id", name: "id", hidden: true },
                         { label: "Chart Number", name: "chartNumber" },
-                        { label: "First Name", name: "firstName" },
-                        { label: "Last Name", name: "lastName" },
-                        { label: "Gender", name: "gender" },
-                        { label: "Date of birth", name: "dob", formatter: 'date', formatoptions: { newformat: 'd/m/Y' } },
-                        { label: "Phone", name: "phone" },
-                        { label: "Email", name: "email" },
-                        { label: "Address", name: "address" },
+                        {
+                            label: "First Name", name: "firstName", formatter: function (cellvalue, options, rowobject) {
+                                return '<a href="#" class="grid-firstname" data-type="text" data-pk="' + rowobject.id + '" data-url="/Patient/UpdateProperty" data-name="FirstName" data-title="Enter first name">' + cellvalue + '</a>';
+                            }
+                        },
+                        {
+                            label: "Last Name", name: "lastName", formatter: function (cellvalue, options, rowobject) {
+                                return '<a href="#" class="grid-lastname" data-type="text" data-pk="' + rowobject.id + '" data-url="/Patient/UpdateProperty" data-name="LastName" data-title="Enter last name">' + cellvalue + '</a>';
+                            }
+                        },
+                        {
+                            label: "Gender", name: "gender", formatter: function (cellvalue, options, rowobject) {
+                                return '<a href="#" class="grid-gender" data-type="select" data-pk="' + rowobject.id + '" data-url="/Patient/UpdateProperty" data-name="Gender" data-title="Select gender" data-value="' + cellvalue + '">' + cellvalue + '</a>';
+                            }
+                        },
+                        {
+                            label: "Date of birth", name: "dob", formatter: function (cellvalue, options, rowobject) {
+                                return '<a href="#" class="grid-dob" data-type="date" data-pk="' + rowobject.id + '" data-url="/Patient/UpdateProperty" data-name="Dob" data-title="Select date of birth" data-value="' + formatDate(cellvalue) + '" data-format="mm/dd/yyyy" data-view-format="mm/dd/yyyy">' + formatDate(cellvalue) + '</a>';
+                            }
+                        },
+                        {
+                            label: "Phone", name: "phone", formatter: function (cellvalue, options, rowobject) {
+                                return '<a href="#" class="grid-phone" data-type="number" data-pk="' + rowobject.id + '" data-url="/Patient/UpdateProperty" data-name="Phone" data-title="Enter phone">' + (cellvalue ?? "") + '</a>';
+                            }
+                        },
+                        {
+                            label: "Email", name: "email", formatter: function (cellvalue, options, rowobject) {
+                                return '<a href="#" class="grid-email" data-type="email" data-pk="' + rowobject.id + '" data-url="/Patient/UpdateProperty" data-name="Email" data-title="Enter email">' + (cellvalue ?? "") + '</a>';
+                            }
+                        },
+                        {
+                            label: "Address", name: "address", formatter: function (cellvalue, options, rowobject) {
+                                return '<a href="#" class="grid-address" data-type="text" data-pk="' + rowobject.id + '" data-url="/Patient/UpdateProperty" data-name="Address" data-title="Enter address">' + (cellvalue ?? "") + '</a>';
+                            }
+                        },
                         {
                             label: "Actions", formatter: function (cellvalue, options, rowobject) {
                                 return '<div class="text-center">'
@@ -83,10 +119,37 @@
                     viewrecords: true,
                     beforeRequest: function () {
                         GetDataFilter();
-                        console.log(paramFilterObj)
+                    },
+                    loadComplete: function () {
+                        $('.grid-firstname').editable();
+                        $('.grid-lastname').editable();
+                        $('.grid-gender').editable({
+                            source: [
+                                { value: "Male", text: 'Male' },
+                                { value: "Female", text: 'Female' },
+                            ]
+                        });
+                        $('.grid-dob').editable();
+                        $('.grid-phone').editable();
+                        $('.grid-email').editable();
+                        $('.grid-address').editable();
                     }
                 })
+
         })
+
+        function formatDate(inputDate) {
+            var date = new Date(inputDate);
+
+            var day = date.getDate();
+            var month = date.getMonth() + 1;
+            var year = date.getFullYear();
+
+            day = (day < 10) ? '0' + day : day;
+            month = (month < 10) ? '0' + month : month;
+
+            return month + '/' + day + '/' + year;
+        }
 
         function GetDataFilter() {
             $.each($('#filter-form').serializeArray(), function (_, kv) {
@@ -249,6 +312,34 @@
                     }
                 });
             }
+        }
+
+        function ExportExcel() {
+            var formData = $('#filter-form').serialize();
+            $.ajax({
+                url: '/Patient/ExportExcel',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    if (response == null || response == undefined) {
+                        toastr.error("Response not found!!!");
+                    }
+                    else {
+                        var blob = new Blob([response], { type: 'application/octet-stream' });
+                        var downloadUrl = URL.createObjectURL(blob);
+                        var aElement = document.createElement("a");
+                        aElement.href = downloadUrl;
+                        aElement.download = "patient.csv";
+                        document.body.appendChild(aElement);
+                        aElement.click();
+                        aElement.remove();
+                        toastr.success("Export done.");
+                    }
+                },
+                error: function (response) {
+                    toastr.error("Internal Server Error!!!");
+                }
+            });
         }
     </script>
 }

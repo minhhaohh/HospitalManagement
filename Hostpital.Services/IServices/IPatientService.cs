@@ -15,6 +15,8 @@ namespace Hostpital.Service.IServices
 
         Task<string> UpdateAsync(int id, PatientUpdateDto patient);
 
+        Task<string> UpdatePropertyAsync(int id, string property, string value);
+
         Task<string> DeleteAsync(int id);
     }
 }

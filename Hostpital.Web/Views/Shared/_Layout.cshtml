@@ -18,6 +18,8 @@
     <!-- JqGrid -->
     <link rel="stylesheet" href="~/lib/jqgrid/css/ui.jqgrid.css">
     <link rel="stylesheet" href="~/lib/jqgrid/css/ui.jqgrid-bootstrap4.css">
+    <!-- X-Editable -->
+    <link rel="stylesheet" href="~/lib/x-editable/dist/bootstrap4-editable/css/bootstrap-editable.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="~/lib/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
@@ -55,7 +57,7 @@
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
                         <li class="nav-item">
                             <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <i class="nav-icon fas fa-atlas"></i>
                                 <p>
                                     Geography
                                     <i class="right fas fa-angle-left"></i>
@@ -127,6 +129,8 @@
     <!-- JqGrid -->
     <script src="~/lib/jqgrid/js/jquery.jqGrid.min.js"></script>
     <script src="~/lib/jqgrid/js/i18n/grid.locale-en.js"></script>
+    <!-- X-Editable -->
+    <script src="~/lib/x-editable/dist/bootstrap4-editable/js/bootstrap-editable.min.js"></script>
     <!-- AdminLTE App -->
     <script src="~/lib/adminlte/dist/js/adminlte.min.js"></script>
     <script>
@@ -144,6 +148,11 @@
                 .css({ 'display': 'block' })
                 .addClass('menu-open').prev('a')
                 .addClass('active');
+
+            // X-Ediable mode
+            $.fn.editable.defaults.mode = 'popup';
+            // Default request method is POST, change to PUT
+            $.fn.editable.defaults.ajaxOptions = { type: "PUT" };
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)

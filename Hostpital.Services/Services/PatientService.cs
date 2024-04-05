@@ -7,6 +7,7 @@ using Hospital.Entityframework.Contexts;
 using Hostpital.Service.IServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel;
 
 namespace Hostpital.Service.Services
 {
@@ -18,7 +19,7 @@ namespace Hostpital.Service.Services
 
         private readonly HospitalContext _context;
 
-        public PatientService(ILogger<PatientService> logger, 
+        public PatientService(ILogger<PatientService> logger,
             IMapper mapper,
             HospitalContext context)
         {
@@ -54,7 +55,8 @@ namespace Hostpital.Service.Services
                 var totalPages = (int)Math.Ceiling((float)totalRecords / (float)paging.PageSize);
 
                 patients = patients.OrderBy(s => s.ChartNumber);
-                patients = patients.Skip(paging.PageIndex * paging.PageSize).Take(paging.PageSize);
+                if (paging.PageSize != 0)
+                    patients = patients.Skip(paging.PageIndex * paging.PageSize).Take(paging.PageSize);
 
                 return new PagedList<PatientDto>(
                     _mapper.ProjectTo<PatientDto>(patients).ToList(),
@@ -67,7 +69,7 @@ namespace Hostpital.Service.Services
             {
                 _logger.LogError(ex.Message);
             }
-            
+
             return null;
         }
 
@@ -98,7 +100,7 @@ namespace Hostpital.Service.Services
             try
             {
                 var existed = await _context.Set<Patient>()
-                .FirstOrDefaultAsync(x => x.Id == id);
+                    .FirstOrDefaultAsync(x => x.Id == id);
 
                 if (existed == null)
                     return $"Not found Patient with Id {id}!!!";
@@ -119,12 +121,45 @@ namespace Hostpital.Service.Services
             return string.Empty;
         }
 
+        public async Task<string> UpdatePropertyAsync(int id, string property, string value)
+        {
+            try
+            {
+                var existed = await _context.Set<Patient>()
+                    .FirstOrDefaultAsync(x => x.Id == id);
+
+                if (existed == null)
+                    return $"Not found Patient with Id {id}!!!";
+
+                var propertyInfo = existed.GetType().GetProperty(property);
+                if (propertyInfo == null)
+                    return $"Not found Property {property}!!!";
+
+                if (propertyInfo.Name == nameof(Patient.Dob))
+                {
+                    propertyInfo.SetValue(existed, DateTime.Parse(value));
+                }
+                else
+                {
+                    propertyInfo.SetValue(existed, value);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message}");
+                return ex.Message;
+            }
+            return string.Empty;
+        }
+
         public async Task<string> DeleteAsync(int id)
         {
             try
             {
                 var existed = await _context.Set<Patient>()
-                .FirstOrDefaultAsync(x => x.Id == id);
+                    .FirstOrDefaultAsync(x => x.Id == id);
 
                 if (existed == null)
                     return $"Not found Patient with Id {id}!!!";

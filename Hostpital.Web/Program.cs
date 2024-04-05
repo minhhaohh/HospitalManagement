@@ -6,6 +6,7 @@ using Hospital.Web;
 using Hostpital.Service.IServices;
 using Hostpital.Service.Services;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,12 +1,17 @@
 ﻿using AutoMapper;
+using CsvHelper;
 using FluentValidation;
 using Hospital.Domain.DTO;
 using Hospital.Domain.Extensions;
+using Hospital.Domain.Models;
 using Hospital.Domain.Objects;
 using Hospital.Web.Extensions;
 using Hospital.Web.Models;
 using Hostpital.Service.IServices;
 using Microsoft.AspNetCore.Mvc;
+using System.Formats.Asn1;
+using System.Globalization;
+using System.Text;
 
 namespace Hospital.Controllers
 {
@@ -115,7 +120,7 @@ namespace Hospital.Controllers
             return Json(new List<string>());
         }
 
-        [HttpPut()]
+        [HttpPut]
         public async Task<JsonResult> Update(int id, PatientUpdateDto patient)
         {
             var validateResults = _validatorPatientUpdate.Validate(patient);
@@ -138,6 +143,38 @@ namespace Hospital.Controllers
                 return Json(new List<string>() { result });
 
             return Json(new List<string>());
+        }
+
+        [HttpPut]
+        public async Task<JsonResult> UpdateProperty(int pk, string name, string value)
+        {
+            
+            var result = await _patientService.UpdatePropertyAsync(pk, name, value);
+            if (!result.IsEmpty())
+                return Json(new List<string>() { result });
+
+            return Json(new List<string>());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ExportExcel(PatientQuery filter)
+        {
+            var paging = new PagingParams() { PageIndex = 0, PageSize = 0 };
+            var patients = await _patientService.SearchPatientsAsync(filter, paging);
+
+            var result = WriteCsvToMemory(patients.Rows);
+            var memoryStream = new MemoryStream(result);
+            return new FileStreamResult(memoryStream, "application/octet-stream") { FileDownloadName = "patient.csv" };
+        }
+
+        public byte[] WriteCsvToMemory(List<PatientDto> records)
+        {
+            var memoryStream = new MemoryStream();
+            var streamWriter = new StreamWriter(memoryStream);
+            var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture);
+            csvWriter.WriteRecords(records);
+            streamWriter.Flush();
+            return memoryStream.ToArray();
         }
     }
 }
