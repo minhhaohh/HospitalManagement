@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Aspose.Pdf;
+using AutoMapper;
 using CsvHelper;
 using FluentValidation;
 using Hospital.Domain.DTO;
@@ -9,9 +10,12 @@ using Hospital.Web.Extensions;
 using Hospital.Web.Models;
 using Hostpital.Service.IServices;
 using Microsoft.AspNetCore.Mvc;
-using System.Formats.Asn1;
+using PdfSharp.Drawing.Layout;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using System.Data;
 using System.Globalization;
-using System.Text;
+using System.IO;
 
 namespace Hospital.Controllers
 {
@@ -98,13 +102,6 @@ namespace Hospital.Controllers
             return PartialView("_PatientModalPartial", patientViewModel);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> OpenDeleteConfirmModalDialog(int id, string chartNumber)
-        {
-            var patientDeleteConfirm = new PatientDeleteConfirmViewModel() { Id = id, ChartNumber = chartNumber };
-            return PartialView("_PatientDeleteConfirmModal", patientDeleteConfirm);
-        }
-
         [HttpPost]
         public async Task<JsonResult> Create(PatientCreateDto patient)
         {
@@ -157,14 +154,37 @@ namespace Hospital.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ExportExcel(PatientQuery filter)
+        public async Task<IActionResult> ExportCsv(PatientQuery filter)
         {
             var paging = new PagingParams() { PageIndex = 0, PageSize = 0 };
             var patients = await _patientService.SearchPatientsAsync(filter, paging);
 
             var result = WriteCsvToMemory(patients.Rows);
             var memoryStream = new MemoryStream(result);
-            return new FileStreamResult(memoryStream, "application/octet-stream") { FileDownloadName = "patient.csv" };
+
+            return File(memoryStream, "application/octet-stream", "patient.csv");
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> PrintPdf(PatientQuery filter)
+        {
+            var paging = new PagingParams() { PageIndex = 0, PageSize = 0 };
+            var patients = await _patientService.SearchPatientsAsync(filter, paging);
+
+            PdfDocument document = new PdfDocument();
+
+            PdfPage page = document.AddPage();
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+
+            XFont font = new XFont("Arial", 20);
+            XTextFormatter tf = new XTextFormatter(gfx);
+            tf.DrawString("HELLO WORLD", font, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.TopLeft);
+            
+            var memoryStream = new MemoryStream();
+            document.Save(memoryStream);
+
+            return File(memoryStream, "application/octet-stream", "patient.pdf");
         }
 
         public byte[] WriteCsvToMemory(List<PatientDto> records)

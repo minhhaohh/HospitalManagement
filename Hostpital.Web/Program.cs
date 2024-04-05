@@ -3,12 +3,15 @@ using Hospital.Domain.DTO;
 using Hospital.Domain.Validations;
 using Hospital.Entityframework.Contexts;
 using Hospital.Web;
+using Hospital.Web.Customs;
 using Hostpital.Service.IServices;
 using Hostpital.Service.Services;
 using Microsoft.EntityFrameworkCore;
-using System;
+using PdfSharp.Fonts;
 
 var builder = WebApplication.CreateBuilder(args);
+
+GlobalFontSettings.FontResolver = new CustomFontResolver();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
