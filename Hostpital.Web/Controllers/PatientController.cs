@@ -1,5 +1,4 @@
-﻿using Aspose.Pdf;
-using AutoMapper;
+﻿using AutoMapper;
 using CsvHelper;
 using FluentValidation;
 using Hospital.Domain.DTO;
@@ -10,12 +9,11 @@ using Hospital.Web.Extensions;
 using Hospital.Web.Models;
 using Hostpital.Service.IServices;
 using Microsoft.AspNetCore.Mvc;
-using PdfSharp.Drawing.Layout;
-using PdfSharp.Drawing;
-using PdfSharp.Pdf;
 using System.Data;
 using System.Globalization;
-using System.IO;
+using System.Text;
+using WkHtmlToPdfDotNet;
+using WkHtmlToPdfDotNet.Contracts;
 
 namespace Hospital.Controllers
 {
@@ -30,6 +28,8 @@ namespace Hospital.Controllers
 
         private readonly IPatientService _patientService;
 
+        private readonly IConverter _converter;
+
         private readonly IValidator<PatientCreateDto> _validatorPatientCreate;
 
         private readonly IValidator<PatientUpdateDto> _validatorPatientUpdate;
@@ -39,12 +39,14 @@ namespace Hospital.Controllers
             IGeographyService geographyService,
             IPatientService patientService,
             IValidator<PatientCreateDto> validatorPatientCreate,
-            IValidator<PatientUpdateDto> validatorPatientUpdate)
+            IValidator<PatientUpdateDto> validatorPatientUpdate,
+            IConverter converter)
         {
             _logger = logger;
             _mapper = mapper;
             _geographyService = geographyService;
             _patientService = patientService;
+            _converter = converter;
             _validatorPatientCreate = validatorPatientCreate;
             _validatorPatientUpdate = validatorPatientUpdate;
         }
@@ -83,7 +85,7 @@ namespace Hospital.Controllers
 
             if (isEdit)
             {
-               var patient = await _patientService.GetPatientByIdAsync(id);
+                var patient = await _patientService.GetPatientByIdAsync(id);
                 if (patient == null)
                     throw new Exception($"Not found Patient with Id {id}!!!");
 
@@ -145,7 +147,7 @@ namespace Hospital.Controllers
         [HttpPut]
         public async Task<JsonResult> UpdateProperty(int pk, string name, string value)
         {
-            
+
             var result = await _patientService.UpdatePropertyAsync(pk, name, value);
             if (!result.IsEmpty())
                 return Json(new List<string>() { result });
@@ -162,7 +164,7 @@ namespace Hospital.Controllers
             var result = WriteCsvToMemory(patients.Rows);
             var memoryStream = new MemoryStream(result);
 
-            return File(memoryStream, "application/octet-stream", "patient.csv");
+            return File(memoryStream, "application/octet-stream", "Patients.csv");
         }
 
 
@@ -172,22 +174,30 @@ namespace Hospital.Controllers
             var paging = new PagingParams() { PageIndex = 0, PageSize = 0 };
             var patients = await _patientService.SearchPatientsAsync(filter, paging);
 
-            PdfDocument document = new PdfDocument();
+            var patientPDFTemplate = System.IO.File.ReadAllText("./Templates/PatientPDFTemplate.html");
+            var htmlContent = patientPDFTemplate.Replace("{{Patients}}", GeneratePatientsHtml(patients.Rows));
 
-            PdfPage page = document.AddPage();
-            XGraphics gfx = XGraphics.FromPdfPage(page);
+            var doc = new HtmlToPdfDocument()
+            {
+                GlobalSettings =
+                {
+                    ColorMode = ColorMode.Color,
+                    Orientation = Orientation.Portrait,
+                    PaperSize = PaperKind.A4
+                },
+                Objects = {
+                    new ObjectSettings()
+                    {
+                        HtmlContent = htmlContent
+                    }
+                }
+            };
 
-            XFont font = new XFont("Arial", 20);
-            XTextFormatter tf = new XTextFormatter(gfx);
-            tf.DrawString("HELLO WORLD", font, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.TopLeft);
-            
-            var memoryStream = new MemoryStream();
-            document.Save(memoryStream);
-
-            return File(memoryStream, "application/octet-stream", "patient.pdf");
+            var pdfBytes = _converter.Convert(doc);
+            return File(pdfBytes, "application/pdf", "Patients.pdf");
         }
 
-        public byte[] WriteCsvToMemory(List<PatientDto> records)
+        private byte[] WriteCsvToMemory(List<PatientDto> records)
         {
             var memoryStream = new MemoryStream();
             var streamWriter = new StreamWriter(memoryStream);
@@ -195,6 +205,22 @@ namespace Hospital.Controllers
             csvWriter.WriteRecords(records);
             streamWriter.Flush();
             return memoryStream.ToArray();
+        }
+
+        private string GeneratePatientsHtml(List<PatientDto> patients)
+        {
+            // Generate HTML for patient list
+            var sb = new StringBuilder();
+            foreach (var patient in patients)
+            {
+                sb.AppendLine($"<tr>");
+                sb.AppendLine($"<td>{patient.Id}</td>");
+                sb.AppendLine($"<td>{patient.ChartNumber}</td>");
+                sb.AppendLine($"<td>{patient.FirstName}</td>");
+                sb.AppendLine($"<td>{patient.LastName}</td>");
+                sb.AppendLine($"</tr>");
+            }
+            return sb.ToString();
         }
     }
 }

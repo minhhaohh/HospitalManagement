@@ -3,21 +3,21 @@ using Hospital.Domain.DTO;
 using Hospital.Domain.Validations;
 using Hospital.Entityframework.Contexts;
 using Hospital.Web;
-using Hospital.Web.Customs;
 using Hostpital.Service.IServices;
 using Hostpital.Service.Services;
 using Microsoft.EntityFrameworkCore;
-using PdfSharp.Fonts;
+using WkHtmlToPdfDotNet;
+using WkHtmlToPdfDotNet.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
-
-GlobalFontSettings.FontResolver = new CustomFontResolver();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<HospitalContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Hospital")));
+options.UseSqlServer(builder.Configuration.GetConnectionString("Hospital")));
+
+builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
